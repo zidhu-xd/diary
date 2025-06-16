@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Digital Diary</title>
     <style>
         * {
@@ -39,10 +39,10 @@
 
         h1 {
             font-size: 3rem;
-            color: #ffffff; /* Changed to white */
+            color: #ffffff;
             margin-bottom: 40px;
             letter-spacing: 1.5px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Simplified shadow for white text */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             animation: textGlow 2s infinite alternate;
             position: relative;
         }
@@ -104,7 +104,8 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 100vh;
+            min-height: 100vh;
             background: #ffffff;
             display: flex;
             flex-direction: column;
@@ -113,12 +114,17 @@
             z-index: 1000;
             animation: fadeOut 1s ease-in-out forwards;
             animation-delay: 3s;
+            overflow: hidden;
         }
 
         .loading-gif {
-            width: 200px;
-            height: 200px;
-            margin-bottom: 30px;
+            width: 20vw;
+            height: 20vw;
+            max-width: 150px;
+            max-height: 150px;
+            min-width: 100px;
+            min-height: 100px;
+            margin-bottom: 20px;
         }
 
         .loading-text {
@@ -135,10 +141,10 @@
 
         @keyframes textGlow {
             from { 
-                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Adjusted for white text */
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             }
             to { 
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Slightly stronger shadow for glow */
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
             }
         }
 
@@ -185,8 +191,12 @@
                 bottom: -5px; 
             }
             .loading-gif {
-                width: 100px;
-                height: 100px;
+                width: 25vw;
+                height: 25vw;
+                max-width: 120px;
+                max-height: 120px;
+                min-width: 90px;
+                min-height: 90px;
             }
             .loading-text {
                 font-size: 1.2rem;
@@ -214,8 +224,12 @@
                 font-size: 0.9rem; 
             }
             .loading-gif {
-                width: 80px;
-                height: 80px;
+                width: 30vw;
+                height: 30vw;
+                max-width: 100px;
+                max-height: 100px;
+                min-width: 80px;
+                min-height: 80px;
             }
             .loading-text {
                 font-size: 1rem;
@@ -226,8 +240,8 @@
 </head>
 <body>
     <div class="loading-screen">
-        <img class="loading-gif" src="https://media.tenor.com/6XLsvhpU61wAAAAi/run-pikachu.gif" alt="Run Pikachu Sticker" onerror="this.src='https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png';">
-        <div class="loading-text">Connecting To ZidhuXD Server...</div>
+        <img class="loading-gif" src="https://media.tenor.com/f4U0edQ1vUQAAAAj/besos.gif" alt="Besos Sticker" onerror="this.src='https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png';">
+        <div class="loading-text">We're loading magic</div>
     </div>
     <div class="container">
         <div class="text-wrapper">
@@ -236,23 +250,23 @@
         <div class="grid-container">
             <a href="events.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Events Image">
-                <div class="box-title">Events</div>
+                <div class="box-title">events</div>
             </a>
             <a href="promises.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Promises Image">
-                <div class="box-title">Lyrics</div>
+                <div class="box-title">promises</div>
             </a>
             <a href="moments.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Moments Image">
-                <div class="box-title">Sent gift</div>
+                <div class="box-title">moments</div>
             </a>
             <a href="goury.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Goury Image">
-                <div class="box-title">name</div>
+                <div class="box-title">goury</div>
             </a>
             <a href="notes.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Notes Image">
-                <div class="box-title">Notes</div>
+                <div class="box-title">notes</div>
             </a>
             <a href="hidden.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Hidden Image">
@@ -260,10 +274,6 @@
             </a>
         </div>
     </div>
-    <audio autoplay loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
     <script>
         // Remove loading screen from DOM after animation
         const loadingScreen = document.querySelector('.loading-screen');
