@@ -18,7 +18,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         .container {
@@ -27,7 +27,8 @@
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
+            max-width: 90%; /* More flexible max-width */
+            width: 800px;
             animation: fadeIn 1.5s ease-in-out;
         }
 
@@ -128,15 +129,57 @@
             to { width: 70%; opacity: 1; }
         }
 
-        @media (max-width: 600px) {
-            h1 { font-size: 2rem; }
-            .container { padding: 20px; }
-            .grid-container { 
-                grid-template-columns: 1fr; /* Stack boxes on small screens */
-                gap: 20px; 
+        /* Media query for screens below 500px */
+        @media (max-width: 500px) {
+            h1 { 
+                font-size: 1.8rem; /* Smaller heading */
+                margin-bottom: 30px; 
             }
-            .box img { width: 80px; height: 80px; }
-            .text-wrapper::after { width: 80%; }
+            .container { 
+                padding: 15px; /* Reduced padding */
+                max-width: 95%; /* More flexible width */
+            }
+            .grid-container { 
+                grid-template-columns: 1fr; /* Stack boxes */
+                gap: 15px; /* Reduced gap for better spacing */
+            }
+            .box { 
+                padding: 15px; /* Reduced padding inside boxes */
+            }
+            .box img { 
+                width: 70px; /* Smaller images */
+                height: 70px; 
+            }
+            .box-title { 
+                font-size: 1rem; /* Smaller title text */
+            }
+            .text-wrapper::after { 
+                width: 70%; /* Adjusted flourish width */
+                bottom: -5px; 
+            }
+        }
+
+        /* Additional media query for very small screens (below 360px) */
+        @media (max-width: 360px) {
+            h1 { 
+                font-size: 1.5rem; /* Even smaller heading */
+            }
+            .container { 
+                padding: 10px; 
+            }
+            .grid-container { 
+                gap: 10px; 
+            }
+            .box { 
+                padding: 10px; 
+            }
+            .box img { 
+                width: 60px; 
+                height: 60px; 
+            }
+            .box-title { 
+                font-size: 0.9rem; 
+            }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
