@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Digital Diary</title>
-    <!-- Preload the GIF to ensure faster loading -->
     <link rel="preload" href="https://media.tenor.com/f4U0edQ1vUQAAAAj/besos.gif" as="image">
     <style>
         * {
@@ -100,31 +99,25 @@
             color: #ffffff;
         }
 
-        /* Loading Screen Styles */
         .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100vh;
-            min-height: 100vh;
             background: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            animation: loadingSequence 5s ease-in-out forwards; /* 4s display + 1s fade-out */
+            animation: loadingSequence 5s ease-in-out forwards;
             overflow: hidden;
         }
 
         .loading-gif {
-            width: 10vw; /* Reduced to 10% of viewport width */
-            height: 10vw; /* Reduced to 10% of viewport height */
-            max-width: 100px; /* Adjusted max to fit smaller size */
-            max-height: 100px;
-            min-width: 80px; /* Adjusted min to ensure visibility */
-            min-height: 80px;
+            width: 120px;
+            height: 120px;
             margin-bottom: 20px;
         }
 
@@ -132,13 +125,14 @@
             font-size: 1.5rem;
             color: #2f1b3a;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
             animation: pulseText 1.5s infinite alternate;
         }
 
         @keyframes loadingSequence {
-            0% { opacity: 1; } /* Start at full opacity, no fade-in */
-            80% { opacity: 1; } /* Stay visible for 4s (0s to 4s) */
-            100% { opacity: 0; visibility: hidden; } /* Fade-out from 4s to 5s */
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
         }
 
         @keyframes fadeIn {
@@ -147,12 +141,8 @@
         }
 
         @keyframes textGlow {
-            from { 
-                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            }
-            to { 
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-            }
+            from { text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); }
+            to { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); }
         }
 
         @keyframes flourishPulse {
@@ -166,75 +156,67 @@
         }
 
         @media (max-width: 500px) {
-            h1 { 
+            h1 {
                 font-size: 1.8rem;
-                margin-bottom: 30px; 
+                margin-bottom: 30px;
             }
-            .container { 
+            .container {
                 padding: 15px;
                 max-width: 95%;
             }
-            .grid-container { 
+            .grid-container {
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
-            .box { 
+            .box {
                 padding: 15px;
             }
-            .box img { 
+            .box img {
                 width: 70px;
                 height: 70px;
             }
-            .box-title { 
+            .box-title {
                 font-size: 1rem;
             }
-            .text-wrapper::after { 
+            .text-wrapper::after {
                 width: 70%;
-                bottom: -5px; 
+                bottom: -5px;
             }
             .loading-gif {
-                width: 20vw; /* Adjusted for smaller screens */
-                height: 20vw;
-                max-width: 90px;
-                max-height: 90px;
-                min-width: 70px;
-                min-height: 70px;
+                width: 100px;
+                height: 100px;
             }
             .loading-text {
-                font-size: 2.2rem;
+                font-size: 1.2rem;
             }
         }
 
         @media (max-width: 360px) {
-            h1 { 
+            h1 {
                 font-size: 1.5rem;
             }
-            .container { 
-                padding: 10px; 
+            .container {
+                padding: 10px;
             }
-            .grid-container { 
-                gap: 10px; 
+            .grid-container {
+                gap: 10px;
             }
-            .box { 
-                padding: 10px; 
+            .box {
+                padding: 10px;
             }
-            .box img { 
-                width: 60px; 
-                height: 60px; 
+            .box img {
+                width: 60px;
+                height: 60px;
             }
-            .box-title { 
-                font-size: 0.9rem; 
+            .box-title {
+                font-size: 0.9rem;
             }
             .loading-gif {
-                width: 40vw; /* Adjusted for very small screens */
-                height: 40vw;
-                max-width: 100px;
-                max-height: 100px;
-                min-width: 90px;
-                min-height: 900px;
+                width: 90px;
+                height: 90px;
             }
             .loading-text {
-                font-size: 3rem;
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -245,6 +227,7 @@
         <img class="loading-gif" src="https://media.tenor.com/f4U0edQ1vUQAAAAj/besos.gif" alt="Besos Sticker" onerror="this.src='https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png';">
         <div class="loading-text">Connecting to Heart Server</div>
     </div>
+
     <div class="container">
         <div class="text-wrapper">
             <h1>Welcome to Our Digital Diary</h1>
@@ -276,8 +259,8 @@
             </a>
         </div>
     </div>
+
     <script>
-        // Remove loading screen from DOM after animation
         const loadingScreen = document.querySelector('.loading-screen');
         loadingScreen.addEventListener('animationend', () => {
             loadingScreen.remove();
