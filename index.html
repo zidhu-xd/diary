@@ -13,21 +13,21 @@
         }
 
         body {
-            background: linear-gradient(135deg, #f5e7e0 0%, #e8d7e6 100%);
+            background: #ffffff;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
         }
 
         .container {
             text-align: center;
             padding: 40px;
-            background: rgba(255, 255, 255, 0.95);
+            background: #000000;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            max-width: 90%; /* More flexible max-width */
+            max-width: 90%;
             width: 800px;
             animation: fadeIn 1.5s ease-in-out;
         }
@@ -39,17 +39,10 @@
 
         h1 {
             font-size: 3rem;
-            color: #2f1b3a;
-            background: linear-gradient(to right, #2f1b3a, #4a3c5e);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            color: #ffffff; /* Changed to white */
             margin-bottom: 40px;
             letter-spacing: 1.5px;
-            text-shadow: 
-                1px 1px 2px rgba(0, 0, 0, 0.3),
-                2px 2px 4px rgba(0, 0, 0, 0.2),
-                3px 3px 6px rgba(47, 27, 58, 0.2);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Simplified shadow for white text */
             animation: textGlow 2s infinite alternate;
             position: relative;
         }
@@ -78,16 +71,16 @@
             position: relative;
             text-align: center;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.8);
+            background: #333333;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             text-decoration: none;
-            color: #2f1b3a;
+            color: #ffffff;
         }
 
         .box:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.05);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
@@ -102,6 +95,37 @@
             font-size: 1.2rem;
             font-weight: 600;
             text-transform: uppercase;
+            color: #ffffff;
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeOut 1s ease-in-out forwards;
+            animation-delay: 3s;
+        }
+
+        .loading-gif {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 30px;
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            color: #2f1b3a;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            animation: pulseText 1.5s infinite alternate;
         }
 
         @keyframes fadeIn {
@@ -111,16 +135,10 @@
 
         @keyframes textGlow {
             from { 
-                text-shadow: 
-                    1px 1px 2px rgba(0, 0, 0, 0.3), 
-                    2px 2px 4px rgba(0, 0, 0, 0.2), 
-                    3px 3px 6px rgba(47, 27, 58, 0.2);
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Adjusted for white text */
             }
             to { 
-                text-shadow: 
-                    1px 1px 4px rgba(0, 0, 0, 0.4), 
-                    3px 3px 6px rgba(0, 0, 0, 0.3), 
-                    4px 4px 8px rgba(47, 27, 58, 0.3);
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Slightly stronger shadow for glow */
             }
         }
 
@@ -129,40 +147,55 @@
             to { width: 70%; opacity: 1; }
         }
 
-        /* Media query for screens below 500px */
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        @keyframes pulseText {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+
         @media (max-width: 500px) {
             h1 { 
-                font-size: 1.8rem; /* Smaller heading */
+                font-size: 1.8rem;
                 margin-bottom: 30px; 
             }
             .container { 
-                padding: 15px; /* Reduced padding */
-                max-width: 95%; /* More flexible width */
+                padding: 15px;
+                max-width: 95%;
             }
             .grid-container { 
-                grid-template-columns: 1fr; /* Stack boxes */
-                gap: 15px; /* Reduced gap for better spacing */
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
             .box { 
-                padding: 15px; /* Reduced padding inside boxes */
+                padding: 15px;
             }
             .box img { 
-                width: 70px; /* Smaller images */
-                height: 70px; 
+                width: 70px;
+                height: 70px;
             }
             .box-title { 
-                font-size: 1rem; /* Smaller title text */
+                font-size: 1rem;
             }
             .text-wrapper::after { 
-                width: 70%; /* Adjusted flourish width */
+                width: 70%;
                 bottom: -5px; 
+            }
+            .loading-gif {
+                width: 100px;
+                height: 100px;
+            }
+            .loading-text {
+                font-size: 1.2rem;
             }
         }
 
-        /* Additional media query for very small screens (below 360px) */
         @media (max-width: 360px) {
             h1 { 
-                font-size: 1.5rem; /* Even smaller heading */
+                font-size: 1.5rem;
             }
             .container { 
                 padding: 10px; 
@@ -180,11 +213,22 @@
             .box-title { 
                 font-size: 0.9rem; 
             }
+            .loading-gif {
+                width: 80px;
+                height: 80px;
+            }
+            .loading-text {
+                font-size: 1rem;
+            }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="loading-screen">
+        <img class="loading-gif" src="https://media.tenor.com/6XLsvhpU61wAAAAi/run-pikachu.gif" alt="Run Pikachu Sticker" onerror="this.src='https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png';">
+        <div class="loading-text">Connecting To ZidhuXD Server...</div>
+    </div>
     <div class="container">
         <div class="text-wrapper">
             <h1>Welcome to Our Digital Diary</h1>
@@ -192,23 +236,23 @@
         <div class="grid-container">
             <a href="events.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Events Image">
-                <div class="box-title">events</div>
+                <div class="box-title">Events</div>
             </a>
             <a href="promises.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Promises Image">
-                <div class="box-title">promises</div>
+                <div class="box-title">Lyrics</div>
             </a>
             <a href="moments.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Moments Image">
-                <div class="box-title">moments</div>
+                <div class="box-title">Sent gift</div>
             </a>
             <a href="goury.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Goury Image">
-                <div class="box-title">goury</div>
+                <div class="box-title">name</div>
             </a>
             <a href="notes.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Notes Image">
-                <div class="box-title">notes</div>
+                <div class="box-title">Notes</div>
             </a>
             <a href="hidden.html" class="box">
                 <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Hidden Image">
@@ -216,5 +260,16 @@
             </a>
         </div>
     </div>
+    <audio autoplay loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        // Remove loading screen from DOM after animation
+        const loadingScreen = document.querySelector('.loading-screen');
+        loadingScreen.addEventListener('animationend', () => {
+            loadingScreen.remove();
+        });
+    </script>
 </body>
 </html>
