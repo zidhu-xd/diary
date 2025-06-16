@@ -1,1 +1,524 @@
-dddddddddddddddddddddddddddd
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixel Audio Player</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f5f5;
+            --pixel-border: #222;
+            --text: #111;
+            --highlight: #444;
+            --pixel-size: 2px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.4;
+            background-image: 
+                linear-gradient(to right, var(--bg) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--bg) 1px, transparent 1px);
+            background-size: 15px 15px;
+            touch-action: manipulation;
+        }
+
+        .pixel-player {
+            width: 100%;
+            max-width: 320px;
+            background-color: white;
+            border: var(--pixel-size) solid var(--pixel-border);
+            box-shadow: 
+                5px 5px 0 rgba(0,0,0,0.1),
+                inset -1px -1px 0 var(--pixel-border),
+                inset 1px 1px 0 white;
+            position: relative;
+            padding: 15px;
+            image-rendering: pixelated;
+        }
+
+        /* Pixel corners */
+        .pixel-player::before,
+        .pixel-player::after,
+        .pixel-player .corner {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: var(--pixel-border);
+            z-index: 2;
+        }
+
+        .pixel-player::before {
+            top: -6px;
+            left: -6px;
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+
+        .pixel-player::after {
+            bottom: -6px;
+            right: -6px;
+            clip-path: polygon(100% 0, 100% 100%, 0 100%);
+        }
+
+        .pixel-player .corner.top-right {
+            top: -6px;
+            right: -6px;
+            clip-path: polygon(100% 0, 0 0, 100% 100%);
+        }
+
+        .pixel-player .corner.bottom-left {
+            bottom: -6px;
+            left: -6px;
+            clip-path: polygon(0 0, 0 100%, 100% 100%);
+        }
+
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(14px, 5vw, 18px);
+            margin: 0 0 8px 0;
+            text-align: center;
+            letter-spacing: -0.5px;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+        }
+
+        .artist {
+            font-size: clamp(12px, 4vw, 16px);
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--highlight);
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+        }
+
+        .cover-container {
+            width: 60vw;
+            max-width: 200px;
+            height: 60vw;
+            max-height: 200px;
+            margin: 0 auto 15px;
+            border: var(--pixel-size) solid var(--pixel-border);
+            position: relative;
+            box-shadow: 
+                inset -1px -1px 0 var(--pixel-border),
+                inset 1px 1px 0 white;
+        }
+
+        .cover-art {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: grayscale(20%) contrast(110%);
+            transition: filter 0.3s ease;
+        }
+
+        .cover-container:hover .cover-art {
+            filter: grayscale(0%) contrast(100%);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+            gap: 8px;
+        }
+
+        button {
+            background: white;
+            border: var(--pixel-size) solid var(--pixel-border);
+            font-family: 'VT323', monospace;
+            font-size: clamp(18px, 6vw, 24px);
+            cursor: pointer;
+            padding: 3px 12px;
+            position: relative;
+            transition: all 0.1s ease;
+            box-shadow: 
+                2px 2px 0 var(--pixel-border),
+                inset -1px -1px 0 var(--pixel-border),
+                inset 1px 1px 0 white;
+            min-width: 40px;
+        }
+
+        button:hover {
+            background-color: #f0f0f0;
+        }
+
+        button:active {
+            box-shadow: 
+                1px 1px 0 var(--pixel-border),
+                inset -1px -1px 0 var(--pixel-border),
+                inset 1px 1px 0 white;
+            transform: translate(1px, 1px);
+        }
+
+        #play-btn {
+            background-color: var(--pixel-border);
+            color: white;
+            padding: 3px 15px;
+        }
+
+        #play-btn:hover {
+            background-color: var(--highlight);
+        }
+
+        .progress-container {
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #ddd;
+            border: var(--pixel-size) solid var(--pixel-border);
+            margin-bottom: 5px;
+            position: relative;
+            box-shadow: 
+                inset -1px -1px 0 var(--pixel-border),
+                inset 1px 1px 0 white;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--pixel-border);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time {
+            display: flex;
+            justify-content: space-between;
+            font-size: clamp(10px, 3vw, 14px);
+        }
+
+        .lyrics {
+            height: 25vh;
+            min-height: 120px;
+            max-height: 180px;
+            overflow-y: auto;
+            border: var(--pixel-size) solid var(--pixel-border);
+            padding: 8px;
+            background-color: white;
+            margin-bottom: 10px;
+            box-shadow: 
+                inset -1px -1px 0 var(--pixel-border),
+                inset 1px 1px 0 white;
+        }
+
+        .lyric-line {
+            margin-bottom: 8px;
+            opacity: 0.6;
+            transition: all 0.2s;
+            position: relative;
+            padding-left: 10px;
+            font-size: clamp(12px, 4vw, 16px);
+        }
+
+        .lyric-line::before {
+            content: '>';
+            position: absolute;
+            left: -5px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .lyric-line.active {
+            opacity: 1;
+            font-weight: bold;
+            padding-left: 15px;
+        }
+
+        .lyric-line.active::before {
+            opacity: 1;
+        }
+
+        /* Pixel scrollbar */
+        .lyrics::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .lyrics::-webkit-scrollbar-track {
+            background: #ddd;
+            border-left: var(--pixel-size) solid var(--pixel-border);
+        }
+
+        .lyrics::-webkit-scrollbar-thumb {
+            background: var(--pixel-border);
+            border: 1px solid white;
+        }
+
+        /* Animated pixel border */
+        @keyframes pixel-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0.1); }
+            50% { box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+        }
+
+        .pixel-player {
+            animation: pixel-glow 4s infinite;
+        }
+
+        /* Mobile-specific adjustments */
+        @media (max-width: 480px) {
+            :root {
+                --pixel-size: 1.5px;
+            }
+            
+            .pixel-player {
+                padding: 12px;
+            }
+            
+            .controls {
+                gap: 6px;
+            }
+            
+            button {
+                padding: 2px 10px;
+                min-width: 36px;
+            }
+            
+            .lyrics {
+                height: 20vh;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .cover-container {
+                width: 55vw;
+                height: 55vw;
+            }
+            
+            .controls {
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pixel-player">
+        <div class="corner top-right"></div>
+        <div class="corner bottom-left"></div>
+        
+        <h1>THE SCIENTIST</h1>
+        <div class="artist">COLDPLAY</div>
+        
+        <div class="cover-container">
+            <img src="https://i.imgur.com/JQb1uZn.jpg" alt="Album Cover" class="cover-art">
+        </div>
+        
+        <div class="controls">
+            <button id="prev-btn">⏮</button>
+            <button id="play-btn">▶</button>
+            <button id="next-btn">⏭</button>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="time">
+                <span id="current-time">0:00</span>
+                <span id="duration">4:26</span>
+            </div>
+        </div>
+        
+        <div class="lyrics" id="lyrics">
+            <div class="lyric-line" data-time="3">Come up to meet you, tell you I'm sorry</div>
+            <div class="lyric-line" data-time="8">You don't know how lovely you are</div>
+            <div class="lyric-line" data-time="13">I had to find you, tell you I need you</div>
+            <div class="lyric-line" data-time="18">Tell you I set you apart</div>
+            <div class="lyric-line" data-time="23">Tell me your secrets and ask me your questions</div>
+            <div class="lyric-line" data-time="28">Oh, let's go back to the start</div>
+            <div class="lyric-line" data-time="36">Running in circles, coming up tails</div>
+            <div class="lyric-line" data-time="41">Heads on a science apart</div>
+            <div class="lyric-line" data-time="48">Nobody said it was easy</div>
+            <div class="lyric-line" data-time="53">It's such a shame for us to part</div>
+            <div class="lyric-line" data-time="58">Nobody said it was easy</div>
+            <div class="lyric-line" data-time="63">No one ever said it would be this hard</div>
+            <div class="lyric-line" data-time="68">Oh, take me back to the start</div>
+        </div>
+    </div>
+
+    <audio id="audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('play-btn');
+        const progress = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+        const lyricsContainer = document.getElementById('lyrics');
+        const lyricLines = document.querySelectorAll('.lyric-line');
+
+        // Touch device detection
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        // Make buttons more touch-friendly
+        if (isTouchDevice) {
+            document.querySelectorAll('button').forEach(btn => {
+                btn.style.padding = '6px 15px';
+                btn.style.minWidth = '44px'; // Minimum touch target size
+            });
+        }
+
+        // Play/Pause
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play().catch(e => {
+                    // Fallback for mobile autoplay restrictions
+                    playBtn.textContent = '▶';
+                    alert('Tap the play button to start audio');
+                });
+                playBtn.textContent = '❚❚';
+            } else {
+                audio.pause();
+                playBtn.textContent = '▶';
+            }
+        }
+
+        playBtn.addEventListener('click', togglePlay);
+        
+        // Better touch feedback
+        if (isTouchDevice) {
+            playBtn.addEventListener('touchstart', () => {
+                playBtn.style.transform = 'scale(0.95)';
+            });
+            
+            playBtn.addEventListener('touchend', () => {
+                playBtn.style.transform = '';
+            });
+        }
+
+        // Update progress
+        function updateProgress() {
+            const { currentTime, duration } = audio;
+            const progressPercent = (currentTime / duration) * 100;
+            progress.style.width = `${progressPercent}%`;
+            
+            // Format time
+            let currentMinutes = Math.floor(currentTime / 60);
+            let currentSeconds = Math.floor(currentTime % 60);
+            if (currentSeconds < 10) {
+                currentSeconds = `0${currentSeconds}`;
+            }
+            currentTimeEl.textContent = `${currentMinutes}:${currentSeconds}`;
+            
+            // Highlight lyrics
+            lyricLines.forEach(line => {
+                line.classList.remove('active');
+                if (parseFloat(line.dataset.time) <= currentTime) {
+                    line.classList.add('active');
+                    
+                    // Auto-scroll to current lyric (with mobile consideration)
+                    if (line.classList.contains('active') && !isDragging) {
+                        const container = lyricsContainer;
+                        const lineTop = line.offsetTop;
+                        const lineHeight = line.offsetHeight;
+                        const containerHeight = container.offsetHeight;
+                        
+                        container.scrollTo({
+                            top: lineTop - containerHeight/2 + lineHeight/2,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        }
+
+        audio.addEventListener('timeupdate', updateProgress);
+
+        // Mobile-friendly progress bar
+        let isDragging = false;
+        
+        function startDrag() {
+            isDragging = true;
+        }
+        
+        function endDrag() {
+            isDragging = false;
+            // Force update after drag ends
+            updateProgress();
+        }
+        
+        function setProgress(e) {
+            const width = this.clientWidth;
+            let clickX;
+            
+            if (e.type === 'touchmove' || e.type === 'touchstart') {
+                const rect = this.getBoundingClientRect();
+                clickX = e.touches[0].clientX - rect.left;
+            } else {
+                clickX = e.offsetX;
+            }
+            
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        }
+
+        const progressBar = document.querySelector('.progress-bar');
+        
+        // Mouse events
+        progressBar.addEventListener('mousedown', startDrag);
+        progressBar.addEventListener('mousemove', (e) => {
+            if (isDragging) setProgress(e);
+        });
+        document.addEventListener('mouseup', endDrag);
+        
+        // Touch events
+        progressBar.addEventListener('touchstart', (e) => {
+            startDrag();
+            setProgress(e);
+        });
+        progressBar.addEventListener('touchmove', setProgress);
+        progressBar.addEventListener('touchend', endDrag);
+        
+        progressBar.addEventListener('click', setProgress);
+
+        // Click lyrics to seek
+        lyricLines.forEach(line => {
+            line.addEventListener('click', () => {
+                audio.currentTime = parseFloat(line.dataset.time);
+            });
+            
+            // Touch devices
+            line.style.cursor = 'pointer';
+        });
+
+        // Spacebar to play/pause (for devices with keyboards)
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePlay();
+            }
+        });
+
+        // Handle mobile audio restrictions
+        document.addEventListener('touchstart', function initialPlay() {
+            // This empty interaction is sometimes needed to enable audio
+            document.removeEventListener('touchstart', initialPlay);
+        }, { once: true });
+        
+        // Set initial duration display
+        audio.addEventListener('loadedmetadata', () => {
+            const duration = audio.duration;
+            let durationMinutes = Math.floor(duration / 60);
+            let durationSeconds = Math.floor(duration % 60);
+            if (durationSeconds < 10) {
+                durationSeconds = `0${durationSeconds}`;
+            }
+            durationEl.textContent = `${durationMinutes}:${durationSeconds}`;
+        });
+    </script>
+</body>
+</html>
