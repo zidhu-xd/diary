@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Diary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5e7e0 0%, #e8d7e6 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .text-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #2f1b3a;
+            background: linear-gradient(to right, #2f1b3a, #4a3c5e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 40px;
+            letter-spacing: 1.5px;
+            text-shadow: 
+                1px 1px 2px rgba(0, 0, 0, 0.3),
+                2px 2px 4px rgba(0, 0, 0, 0.2),
+                3px 3px 6px rgba(47, 27, 58, 0.2);
+            animation: textGlow 2s infinite alternate;
+            position: relative;
+        }
+
+        .text-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #4a3c5e, transparent);
+            border-radius: 2px;
+            animation: flourishPulse 2s infinite alternate;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .box {
+            position: relative;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: #2f1b3a;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .box img {
+            width: 100px;
+            height: 100px;
+            image-rendering: pixelated;
+            margin-bottom: 10px;
+        }
+
+        .box-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes textGlow {
+            from { 
+                text-shadow: 
+                    1px 1px 2px rgba(0, 0, 0, 0.3), 
+                    2px 2px 4px rgba(0, 0, 0, 0.2), 
+                    3px 3px 6px rgba(47, 27, 58, 0.2);
+            }
+            to { 
+                text-shadow: 
+                    1px 1px 4px rgba(0, 0, 0, 0.4), 
+                    3px 3px 6px rgba(0, 0, 0, 0.3), 
+                    4px 4px 8px rgba(47, 27, 58, 0.3);
+            }
+        }
+
+        @keyframes flourishPulse {
+            from { width: 60%; opacity: 0.7; }
+            to { width: 70%; opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 20px; }
+            .grid-container { 
+                grid-template-columns: 1fr; /* Stack boxes on small screens */
+                gap: 20px; 
+            }
+            .box img { width: 80px; height: 80px; }
+            .text-wrapper::after { width: 80%; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="text-wrapper">
+            <h1>Welcome to Our Digital Diary</h1>
+        </div>
+        <div class="grid-container">
+            <a href="events.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Events Image">
+                <div class="box-title">events</div>
+            </a>
+            <a href="promises.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Promises Image">
+                <div class="box-title">promises</div>
+            </a>
+            <a href="moments.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Moments Image">
+                <div class="box-title">moments</div>
+            </a>
+            <a href="goury.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Goury Image">
+                <div class="box-title">goury</div>
+            </a>
+            <a href="notes.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Notes Image">
+                <div class="box-title">notes</div>
+            </a>
+            <a href="hidden.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Hidden Image">
+                <div class="box-title">HIDDEN</div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
