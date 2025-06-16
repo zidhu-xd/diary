@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Digital Diary</title>
+    <!-- Preload the GIF to ensure faster loading -->
+    <link rel="preload" href="https://media.tenor.com/f4U0edQ1vUQAAAAj/besos.gif" as="image">
     <style>
         * {
             margin: 0;
@@ -112,8 +114,7 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            animation: fadeOut 1s ease-in-out forwards;
-            animation-delay: 3s;
+            animation: loadingSequence 5s ease-in-out forwards; /* 4s display + 1s fade-out */
             overflow: hidden;
         }
 
@@ -134,6 +135,12 @@
             animation: pulseText 1.5s infinite alternate;
         }
 
+        @keyframes loadingSequence {
+            0% { opacity: 1; } /* Start at full opacity, no fade-in */
+            80% { opacity: 1; } /* Stay visible for 4s (0s to 4s) */
+            100% { opacity: 0; visibility: hidden; } /* Fade-out from 4s to 5s */
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -151,11 +158,6 @@
         @keyframes flourishPulse {
             from { width: 60%; opacity: 0.7; }
             to { width: 70%; opacity: 1; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; visibility: hidden; }
         }
 
         @keyframes pulseText {
