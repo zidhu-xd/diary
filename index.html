@@ -2,60 +2,268 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload File to Telegram</title>
-    <link href="output.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Digital Diary</title>
+    <link rel="preload" href="https://media.tenor.com/f4U0edQ1vUQAAAAj/besos.gif" as="image">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        body {
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: #000000;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            width: 800px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .text-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 40px;
+            letter-spacing: 1.5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            animation: textGlow 2s infinite alternate;
+            position: relative;
+        }
+
+        .text-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #4a3c5e, transparent);
+            border-radius: 2px;
+            animation: flourishPulse 2s infinite alternate;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .box {
+            position: relative;
+            text-align: center;
+            padding: 20px;
+            background: #333333;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .box:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .box img {
+            width: 100px;
+            height: 100px;
+            image-rendering: pixelated;
+            margin-bottom: 10px;
+        }
+
+        .box-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #ffffff;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: loadingSequence 5s ease-in-out forwards;
+            overflow: hidden;
+        }
+
+        .loading-gif {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            color: #2f1b3a;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            animation: pulseText 1.5s infinite alternate;
+        }
+
+        @keyframes loadingSequence {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes textGlow {
+            from { text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); }
+            to { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); }
+        }
+
+        @keyframes flourishPulse {
+            from { width: 60%; opacity: 0.7; }
+            to { width: 70%; opacity: 1; }
+        }
+
+        @keyframes pulseText {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 500px) {
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 30px;
+            }
+            .container {
+                padding: 15px;
+                max-width: 95%;
+            }
+            .grid-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .box {
+                padding: 15px;
+            }
+            .box img {
+                width: 70px;
+                height: 70px;
+            }
+            .box-title {
+                font-size: 1rem;
+            }
+            .text-wrapper::after {
+                width: 70%;
+                bottom: -5px;
+            }
+            .loading-gif {
+                width: 100px;
+                height: 100px;
+            }
+            .loading-text {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            .container {
+                padding: 10px;
+            }
+            .grid-container {
+                gap: 10px;
+            }
+            .box {
+                padding: 10px;
+            }
+            .box img {
+                width: 60px;
+                height: 60px;
+            }
+            .box-title {
+                font-size: 0.9rem;
+            }
+            .loading-gif {
+                width: 90px;
+                height: 90px;
+            }
+            .loading-text {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 class="text-2xl font-bold mb-6 text-center">Upload File to Telegram</h1>
-        <form id="uploadForm" enctype="multipart/form-data" class="space-y-4">
-            <input type="file" name="file" accept="image/png,image/jpeg,image/gif,video/mp4,video/mpeg" class="w-full p-2 border rounded" required>
-            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Upload</button>
-        </form>
-        <p id="status" class="mt-4 text-center"></p>
+<body>
+    <div class="loading-screen">
+        <img class="loading-gif" src="https://media.tenor.com/f4U0edQ1vUQAAAAj/besos.gif" alt="Besos Sticker" onerror="this.src='https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png';">
+        <div class="loading-text">Connecting to Heart Server</div>
+    </div>
+
+    <div class="container">
+        <div class="text-wrapper">
+            <h1>Welcome to Our Digital Diary</h1>
+        </div>
+        <div class="grid-container">
+            <a href="events.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Events Image">
+                <div class="box-title">events</div>
+            </a>
+            <a href="promises.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Promises Image">
+                <div class="box-title">music</div>
+            </a>
+            <a href="moments.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Moments Image">
+                <div class="box-title">moments</div>
+            </a>
+            <a href="goury.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Goury Image">
+                <div class="box-title">name</div>
+            </a>
+            <a href="notes.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Notes Image">
+                <div class="box-title">notes</div>
+            </a>
+            <a href="hidden.html" class="box">
+                <img src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/5e7f9a1b2c3d4e5.png" alt="Hidden Image">
+                <div class="box-title">HIDDEN</div>
+            </a>
+        </div>
     </div>
 
     <script>
-        const form = document.getElementById('uploadForm');
-        const status = document.getElementById('status');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            status.textContent = 'Uploading...';
-
-            const fileInput = form.querySelector('input[name="file"]');
-            const file = fileInput.files[0];
-            if (!file) {
-                status.textContent = 'Please select a file.';
-                return;
-            }
-
-            if (file.size > 50 * 1024 * 1024) {
-                status.textContent = 'File size exceeds 50MB limit.';
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const response = await fetch('https://diary-ao.onrender.com/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-                if (response.ok) {
-                    status.textContent = 'File sent to Telegram successfully!';
-                    form.reset();
-                } else {
-                    status.textContent = `Error: ${result.message || 'Failed to send file to Telegram.'}`;
-                }
-            } catch (error) {
-                status.textContent = 'Error uploading file: Network or server issue. Check backend logs.';
-                console.error(error);
-            }
+        const loadingScreen = document.querySelector('.loading-screen');
+        loadingScreen.addEventListener('animationend', () => {
+            loadingScreen.remove();
         });
     </script>
 </body>
