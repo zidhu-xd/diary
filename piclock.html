@@ -3,155 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Uploader</title>
+    <title>Cozy Cloud Uploader</title>
     <style>
         :root {
-            --primary: #4285F4;
-            --error: #EA4335;
-            --success: #34A853;
-            --gray: #F1F3F4;
+            --primary: #6d28d9;
+            --primary-light: #8b5cf6;
+            --error: #ef4444;
+            --success: #10b981;
+            --gray: #f3f4f6;
+            --dark: #1f2937;
         }
+        
         body {
-            font-family: 'Roboto', sans-serif;
-            max-width: 600px;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: #f9fafb;
+            color: var(--dark);
+            max-width: 500px;
             margin: 0 auto;
             padding: 2rem;
             line-height: 1.6;
         }
-        .upload-container {
+        
+        .container {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             padding: 2rem;
             margin-top: 2rem;
         }
-        #drop-zone {
-            border: 2px dashed #ccc;
-            padding: 2rem;
+        
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .upload-box {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 2.5rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            background-color: var(--gray);
         }
-        #drop-zone.highlight {
+        
+        .upload-box:hover {
+            border-color: var(--primary-light);
+            background-color: rgba(109, 40, 217, 0.05);
+        }
+        
+        .upload-box.highlight {
             border-color: var(--primary);
-            background: rgba(66, 133, 244, 0.05);
+            background-color: rgba(109, 40, 217, 0.1);
         }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .preview-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
         #preview {
             max-width: 100%;
             max-height: 300px;
-            display: block;
-            margin: 1rem auto;
-            border-radius: 4px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             display: none;
         }
+        
         video#preview {
             width: 100%;
         }
-        button {
-            background: var(--primary);
+        
+        .file-info {
+            background-color: var(--gray);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            background-color: var(--primary);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
             width: 100%;
-            margin-top: 1rem;
-            transition: background 0.3s;
+            transition: background-color 0.3s;
         }
-        button:hover {
-            background: #3367D6;
+        
+        .btn:hover {
+            background-color: var(--primary-light);
         }
-        button:disabled {
-            background: var(--gray);
+        
+        .btn:disabled {
+            background-color: #9ca3af;
             cursor: not-allowed;
         }
+        
         .progress-container {
             height: 6px;
-            background: var(--gray);
+            background-color: #e5e7eb;
             border-radius: 3px;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
             overflow: hidden;
             display: none;
         }
-        #progress-bar {
+        
+        .progress-bar {
             height: 100%;
             width: 0%;
-            background: var(--primary);
+            background-color: var(--primary);
             transition: width 0.3s;
         }
+        
         .status {
-            padding: 0.75rem;
-            border-radius: 4px;
-            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
             display: none;
         }
-        .error {
-            background: rgba(234, 67, 53, 0.1);
-            color: var(--error);
-            display: block;
-        }
-        .success {
-            background: rgba(52, 168, 83, 0.1);
+        
+        .status.success {
+            background-color: rgba(16, 185, 129, 0.1);
             color: var(--success);
             display: block;
         }
-        .file-info {
-            margin: 1rem 0;
-            padding: 0.75rem;
-            background: var(--gray);
-            border-radius: 4px;
+        
+        .status.error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            display: block;
+        }
+        
+        .icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            color: var(--primary);
         }
     </style>
 </head>
 <body>
-    <div class="upload-container">
-        <h1>File Uploader</h1>
-        <p>Upload JPG, JPEG, PNG (max 10MB) or MP4 (max 25MB)</p>
+    <div class="container">
+        <h1>Cozy Cloud Uploader</h1>
         
-        <div id="drop-zone">
-            <p>Drag & drop files here or click to select</p>
-            <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.mp4,image/jpeg,image/png,video/mp4" style="display:none;">
+        <div id="dropZone" class="upload-box">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <h3>Drag & Drop Files Here</h3>
+            <p>or click to browse your device</p>
+            <p>Supports: JPG, PNG, MP4 (Max 25MB)</p>
+            <input type="file" id="fileInput" class="file-input" accept=".jpg,.jpeg,.png,.mp4">
         </div>
         
-        <div id="file-info" class="file-info" style="display:none;"></div>
+        <div id="fileInfo" class="file-info" style="display: none;"></div>
         
-        <div id="media-container">
-            <img id="preview-image" alt="Image Preview" style="display:none;">
-            <video id="preview-video" controls style="display:none;"></video>
+        <div class="preview-container">
+            <img id="imagePreview" class="preview" alt="Image preview">
+            <video id="videoPreview" class="preview" controls></video>
         </div>
         
-        <div class="progress-container" id="progress-container">
-            <div id="progress-bar"></div>
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
         </div>
         
-        <button id="upload-btn" disabled>Upload File</button>
+        <button id="uploadBtn" class="btn" disabled>Upload to Cloud</button>
         
-        <div id="status" class="status"></div>
+        <div id="statusMessage" class="status"></div>
     </div>
 
     <script>
         // Configuration
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzghXFYUWfeFpFKPBpKWInoQ2eXUT7msS6IEY4UfUvOwvogNqDi0RXJAgTG-Ri5Imw0nw/exec';
         const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
         const MAX_VIDEO_SIZE = 25 * 1024 * 1024; // 25MB
-        const ALLOWED_TYPES = [
-            'image/jpeg', 'image/jpg', 'image/png', 
-            'video/mp4', 'video/quicktime'
-        ];
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyWt7keIC3LY2GLNk59NU4lA-8o3bxvIJWcpN1Jfqvjv5CaRMmGLK3k3lJ01iGhyj0i/exec';
         
         // DOM Elements
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const fileInfo = document.getElementById('file-info');
-        const previewImage = document.getElementById('preview-image');
-        const previewVideo = document.getElementById('preview-video');
-        const uploadBtn = document.getElementById('upload-btn');
-        const status = document.getElementById('status');
-        const progressContainer = document.getElementById('progress-container');
-        const progressBar = document.getElementById('progress-bar');
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const imagePreview = document.getElementById('imagePreview');
+        const videoPreview = document.getElementById('videoPreview');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const statusMessage = document.getElementById('statusMessage');
         
         // Event Listeners
+        dropZone.addEventListener('click', () => fileInput.click());
+        
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
             dropZone.addEventListener(event, preventDefaults, false);
         });
@@ -165,7 +217,6 @@
         });
         
         dropZone.addEventListener('drop', handleDrop, false);
-        dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', handleFileSelect);
         uploadBtn.addEventListener('click', handleUpload);
         
@@ -187,39 +238,36 @@
             const dt = e.dataTransfer;
             const files = dt.files;
             if (files.length) {
-                validateAndPreview(files[0]);
+                handleFiles(files[0]);
             }
         }
         
         function handleFileSelect() {
             if (fileInput.files.length) {
-                validateAndPreview(fileInput.files[0]);
+                handleFiles(fileInput.files[0]);
             }
         }
         
-        function validateAndPreview(file) {
+        function handleFiles(file) {
             // Reset UI
-            previewImage.style.display = 'none';
-            previewVideo.style.display = 'none';
-            fileInfo.style.display = 'none';
-            status.style.display = 'none';
+            resetPreview();
             uploadBtn.disabled = true;
             
-            // Validate file type
-            const fileType = file.type.toLowerCase();
+            // Get file extension
             const fileExt = file.name.split('.').pop().toLowerCase();
             const isImage = ['jpg', 'jpeg', 'png'].includes(fileExt);
             const isVideo = fileExt === 'mp4';
             
-            if (!ALLOWED_TYPES.includes(fileType) || !(isImage || isVideo)) {
-                showError('Only JPG, JPEG, PNG, or MP4 files are allowed');
+            // Validate file type
+            if (!isImage && !isVideo) {
+                showStatus('Only JPG, PNG, or MP4 files are allowed', 'error');
                 return;
             }
             
             // Validate file size
             const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
             if (file.size > maxSize) {
-                showError(`File exceeds ${maxSize/(1024*1024)}MB limit`);
+                showStatus(`File exceeds ${maxSize/(1024*1024)}MB limit`, 'error');
                 return;
             }
             
@@ -227,19 +275,19 @@
             fileInfo.style.display = 'block';
             fileInfo.innerHTML = `
                 <strong>File:</strong> ${file.name}<br>
-                <strong>Type:</strong> ${fileType}<br>
+                <strong>Type:</strong> ${fileExt.toUpperCase()}<br>
                 <strong>Size:</strong> ${formatFileSize(file.size)}
             `;
             
-            // Preview media
+            // Preview file
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = function(e) {
                 if (isImage) {
-                    previewImage.src = e.target.result;
-                    previewImage.style.display = 'block';
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
                 } else if (isVideo) {
-                    previewVideo.src = e.target.result;
-                    previewVideo.style.display = 'block';
+                    videoPreview.src = e.target.result;
+                    videoPreview.style.display = 'block';
                 }
                 uploadBtn.disabled = false;
             };
@@ -250,53 +298,63 @@
             const file = fileInput.files[0];
             if (!file) return;
             
+            const fileExt = file.name.split('.').pop().toLowerCase();
+            
             uploadBtn.disabled = true;
-            status.style.display = 'none';
             progressContainer.style.display = 'block';
             progressBar.style.width = '0%';
+            statusMessage.style.display = 'none';
             
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = function(e) {
                 const base64Data = e.target.result.split(',')[1];
-                const fileExt = file.name.split('.').pop().toLowerCase();
                 
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', SCRIPT_URL, true);
-                xhr.setRequestHeader('Content-Type', 'text/plain');
-                xhr.setRequestHeader('X-File-Type', fileExt);
+                xhr.open('POST', API_URL, true);
                 
-                xhr.upload.onprogress = (e) => {
+                // Add file type as parameter
+                const urlWithParams = `${API_URL}?fileType=${fileExt}`;
+                
+                xhr.upload.onprogress = function(e) {
                     if (e.lengthComputable) {
                         const percent = Math.round((e.loaded / e.total) * 100);
                         progressBar.style.width = percent + '%';
                     }
                 };
                 
-                xhr.onload = () => {
+                xhr.onload = function() {
                     progressContainer.style.display = 'none';
                     
                     try {
                         const response = JSON.parse(xhr.responseText);
                         if (response.status === "success") {
-                            showSuccess(`Uploaded successfully! (${formatFileSize(response.size)})`);
-                            console.log('File URL:', response.fileUrl);
+                            showStatus('File uploaded successfully!', 'success');
+                            console.log('File URL:', response.url);
                         } else {
-                            showError(response.message || 'Upload failed');
+                            throw new Error(response.message || 'Upload failed');
                         }
-                    } catch (e) {
-                        showError('Error processing response');
-                        console.error(e);
+                    } catch (error) {
+                        showStatus(error.message, 'error');
                     }
                 };
                 
-                xhr.onerror = () => {
+                xhr.onerror = function() {
                     progressContainer.style.display = 'none';
-                    showError('Network error during upload');
+                    showStatus('Network error during upload', 'error');
                 };
                 
                 xhr.send(base64Data);
             };
             reader.readAsDataURL(file);
+        }
+        
+        function resetPreview() {
+            imagePreview.style.display = 'none';
+            imagePreview.src = '';
+            videoPreview.style.display = 'none';
+            videoPreview.src = '';
+            fileInfo.style.display = 'none';
+            statusMessage.style.display = 'none';
         }
         
         function formatFileSize(bytes) {
@@ -307,17 +365,11 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
         
-        function showError(message) {
-            status.textContent = message;
-            status.className = 'status error';
-            status.style.display = 'block';
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status ${type}`;
+            statusMessage.style.display = 'block';
             uploadBtn.disabled = false;
-        }
-        
-        function showSuccess(message) {
-            status.textContent = message;
-            status.className = 'status success';
-            status.style.display = 'block';
         }
     </script>
 </body>
