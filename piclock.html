@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Image to Email</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="output.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h1 class="text-2xl font-bold mb-6 text-center">Upload Image to Email</h1>
         <form id="uploadForm" action="https://formspree.io/f/xkgbzwrw" method="POST" enctype="multipart/form-data" class="space-y-4">
-            <input type="file" name="image" accept="image/*" class="w-full p-2 border rounded" required>
-            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Upload</button>
+            <label>
+                Your image:
+                <input type="file" name="image" accept="image/*" class="w-full p-2 border rounded" required>
+            </label>
+            <input type="text" name="_gotcha" style="display:none" aria-hidden="true">
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Send</button>
         </form>
         <p id="status" class="mt-4 text-center"></p>
     </div>
@@ -50,10 +54,11 @@
                     status.textContent = 'Image sent to email successfully!';
                     form.reset();
                 } else {
-                    status.textContent = 'Error sending image.';
+                    const errorData = await response.json();
+                    status.textContent = `Error: ${errorData.errors ? errorData.errors.map(e => e.message).join(', ') : 'Failed to send image.'}`;
                 }
             } catch (error) {
-                status.textContent = 'Error uploading image.';
+                status.textContent = 'Error uploading image: Network or server issue.';
                 console.error(error);
             }
         });
