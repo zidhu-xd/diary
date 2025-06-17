@@ -3,374 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cozy Cloud Uploader</title>
-    <style>
-        :root {
-            --primary: #6d28d9;
-            --primary-light: #8b5cf6;
-            --error: #ef4444;
-            --success: #10b981;
-            --gray: #f3f4f6;
-            --dark: #1f2937;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background-color: #f9fafb;
-            color: var(--dark);
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 2rem;
-            line-height: 1.6;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-            margin-top: 2rem;
-        }
-        
-        h1 {
-            color: var(--primary);
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-        }
-        
-        .upload-box {
-            border: 2px dashed #d1d5db;
-            border-radius: 8px;
-            padding: 2.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 1.5rem;
-            background-color: var(--gray);
-        }
-        
-        .upload-box:hover {
-            border-color: var(--primary-light);
-            background-color: rgba(109, 40, 217, 0.05);
-        }
-        
-        .upload-box.highlight {
-            border-color: var(--primary);
-            background-color: rgba(109, 40, 217, 0.1);
-        }
-        
-        .file-input {
-            display: none;
-        }
-        
-        .preview-container {
-            margin: 1.5rem 0;
-            text-align: center;
-        }
-        
-        #preview {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
-        
-        video#preview {
-            width: 100%;
-        }
-        
-        .file-info {
-            background-color: var(--gray);
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            font-size: 0.9rem;
-        }
-        
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.3s;
-        }
-        
-        .btn:hover {
-            background-color: var(--primary-light);
-        }
-        
-        .btn:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
-        }
-        
-        .progress-container {
-            height: 6px;
-            background-color: #e5e7eb;
-            border-radius: 3px;
-            margin: 1.5rem 0;
-            overflow: hidden;
-            display: none;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background-color: var(--primary);
-            transition: width 0.3s;
-        }
-        
-        .status {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1.5rem;
-            display: none;
-        }
-        
-        .status.success {
-            background-color: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            display: block;
-        }
-        
-        .status.error {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: var(--error);
-            display: block;
-        }
-        
-        .icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 1rem;
-            color: var(--primary);
-        }
-    </style>
+    <title>Upload Image to Email</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="container">
-        <h1>Cozy Cloud Uploader</h1>
-        
-        <div id="dropZone" class="upload-box">
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-            </svg>
-            <h3>Drag & Drop Files Here</h3>
-            <p>or click to browse your device</p>
-            <p>Supports: JPG, PNG, MP4 (Max 25MB)</p>
-            <input type="file" id="fileInput" class="file-input" accept=".jpg,.jpeg,.png,.mp4">
-        </div>
-        
-        <div id="fileInfo" class="file-info" style="display: none;"></div>
-        
-        <div class="preview-container">
-            <img id="imagePreview" class="preview" alt="Image preview">
-            <video id="videoPreview" class="preview" controls></video>
-        </div>
-        
-        <div class="progress-container" id="progressContainer">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-        
-        <button id="uploadBtn" class="btn" disabled>Upload to Cloud</button>
-        
-        <div id="statusMessage" class="status"></div>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6 text-center">Upload Image to Email</h1>
+        <form id="uploadForm" action="https://formspree.io/f/xkgbzwrw" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <input type="file" name="image" accept="image/*" class="w-full p-2 border rounded" required>
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Upload</button>
+        </form>
+        <p id="status" class="mt-4 text-center"></p>
     </div>
 
     <script>
-        // Configuration
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzghXFYUWfeFpFKPBpKWInoQ2eXUT7msS6IEY4UfUvOwvogNqDi0RXJAgTG-Ri5Imw0nw/exec';
-        const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
-        const MAX_VIDEO_SIZE = 25 * 1024 * 1024; // 25MB
-        
-        // DOM Elements
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const fileInfo = document.getElementById('fileInfo');
-        const imagePreview = document.getElementById('imagePreview');
-        const videoPreview = document.getElementById('videoPreview');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressBar = document.getElementById('progressBar');
-        const statusMessage = document.getElementById('statusMessage');
-        
-        // Event Listeners
-        dropZone.addEventListener('click', () => fileInput.click());
-        
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
-            dropZone.addEventListener(event, preventDefaults, false);
-        });
-        
-        ['dragenter', 'dragover'].forEach(event => {
-            dropZone.addEventListener(event, highlight, false);
-        });
-        
-        ['dragleave', 'drop'].forEach(event => {
-            dropZone.addEventListener(event, unhighlight, false);
-        });
-        
-        dropZone.addEventListener('drop', handleDrop, false);
-        fileInput.addEventListener('change', handleFileSelect);
-        uploadBtn.addEventListener('click', handleUpload);
-        
-        // Functions
-        function preventDefaults(e) {
+        const form = document.getElementById('uploadForm');
+        const status = document.getElementById('status');
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            e.stopPropagation();
-        }
-        
-        function highlight() {
-            dropZone.classList.add('highlight');
-        }
-        
-        function unhighlight() {
-            dropZone.classList.remove('highlight');
-        }
-        
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            if (files.length) {
-                handleFiles(files[0]);
-            }
-        }
-        
-        function handleFileSelect() {
-            if (fileInput.files.length) {
-                handleFiles(fileInput.files[0]);
-            }
-        }
-        
-        function handleFiles(file) {
-            // Reset UI
-            resetPreview();
-            uploadBtn.disabled = true;
-            
-            // Get file extension
-            const fileExt = file.name.split('.').pop().toLowerCase();
-            const isImage = ['jpg', 'jpeg', 'png'].includes(fileExt);
-            const isVideo = fileExt === 'mp4';
-            
-            // Validate file type
-            if (!isImage && !isVideo) {
-                showStatus('Only JPG, PNG, or MP4 files are allowed', 'error');
-                return;
-            }
-            
-            // Validate file size
-            const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
-            if (file.size > maxSize) {
-                showStatus(`File exceeds ${maxSize/(1024*1024)}MB limit`, 'error');
-                return;
-            }
-            
-            // Show file info
-            fileInfo.style.display = 'block';
-            fileInfo.innerHTML = `
-                <strong>File:</strong> ${file.name}<br>
-                <strong>Type:</strong> ${fileExt.toUpperCase()}<br>
-                <strong>Size:</strong> ${formatFileSize(file.size)}
-            `;
-            
-            // Preview file
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                if (isImage) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                } else if (isVideo) {
-                    videoPreview.src = e.target.result;
-                    videoPreview.style.display = 'block';
-                }
-                uploadBtn.disabled = false;
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        function handleUpload() {
+            status.textContent = 'Uploading...';
+
+            const fileInput = form.querySelector('input[name="image"]');
             const file = fileInput.files[0];
-            if (!file) return;
-            
-            const fileExt = file.name.split('.').pop().toLowerCase();
-            
-            uploadBtn.disabled = true;
-            progressContainer.style.display = 'block';
-            progressBar.style.width = '0%';
-            statusMessage.style.display = 'none';
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Data = e.target.result.split(',')[1];
-                
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', API_URL, true);
-                
-                // Add file type as parameter
-                const urlWithParams = `${API_URL}?fileType=${fileExt}`;
-                
-                xhr.upload.onprogress = function(e) {
-                    if (e.lengthComputable) {
-                        const percent = Math.round((e.loaded / e.total) * 100);
-                        progressBar.style.width = percent + '%';
+            if (!file) {
+                status.textContent = 'Please select an image.';
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                status.textContent = 'File size exceeds 10MB limit.';
+                return;
+            }
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
                     }
-                };
-                
-                xhr.onload = function() {
-                    progressContainer.style.display = 'none';
-                    
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        if (response.status === "success") {
-                            showStatus('File uploaded successfully!', 'success');
-                            console.log('File URL:', response.url);
-                        } else {
-                            throw new Error(response.message || 'Upload failed');
-                        }
-                    } catch (error) {
-                        showStatus(error.message, 'error');
-                    }
-                };
-                
-                xhr.onerror = function() {
-                    progressContainer.style.display = 'none';
-                    showStatus('Network error during upload', 'error');
-                };
-                
-                xhr.send(base64Data);
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        function resetPreview() {
-            imagePreview.style.display = 'none';
-            imagePreview.src = '';
-            videoPreview.style.display = 'none';
-            videoPreview.src = '';
-            fileInfo.style.display = 'none';
-            statusMessage.style.display = 'none';
-        }
-        
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        function showStatus(message, type) {
-            statusMessage.textContent = message;
-            statusMessage.className = `status ${type}`;
-            statusMessage.style.display = 'block';
-            uploadBtn.disabled = false;
-        }
+                });
+
+                if (response.ok) {
+                    status.textContent = 'Image sent to email successfully!';
+                    form.reset();
+                } else {
+                    status.textContent = 'Error sending image.';
+                }
+            } catch (error) {
+                status.textContent = 'Error uploading image.';
+                console.error(error);
+            }
+        });
     </script>
 </body>
 </html>
