@@ -3,119 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drive Uploader</title>
+    <title>Secure Image Uploader</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
+        :root {
+            --primary: #4285F4;
+            --error: #EA4335;
+            --success: #34A853;
+            --warning: #FBBC05;
+            --gray: #F1F3F4;
         }
-        .upload-box {
-            border: 2px dashed #ccc;
-            padding: 30px;
-            margin: 20px 0;
-            border-radius: 5px;
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f8f9fa;
+            color: #202124;
+        }
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .upload-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .drop-zone {
+            border: 2px dashed var(--gray);
+            border-radius: 6px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .drop-zone.active {
+            border-color: var(--primary);
+            background-color: rgba(66, 133, 244, 0.05);
+        }
+        .drop-zone.reject {
+            border-color: var(--error);
+            background-color: rgba(234, 67, 53, 0.05);
         }
         #preview {
-            max-width: 300px;
+            max-width: 100%;
             max-height: 300px;
-            margin: 15px 0;
+            margin: 1rem 0;
+            display: none;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .file-info {
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: var(--gray);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .progress-container {
+            height: 6px;
+            background: var(--gray);
+            border-radius: 3px;
+            margin: 1rem 0;
+            overflow: hidden;
             display: none;
         }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
         button {
-            background-color: #4285F4;
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 0.75rem 1.5rem;
             border-radius: 4px;
+            font-size: 1rem;
             cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #3367D6;
         }
         button:disabled {
-            background-color: #cccccc;
+            background: var(--gray);
+            color: #5F6368;
             cursor: not-allowed;
         }
         .status {
-            margin-top: 15px;
-            font-weight: bold;
-            min-height: 20px;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .error {
+            background-color: rgba(234, 67, 53, 0.1);
+            color: var(--error);
+            display: block;
+        }
+        .success {
+            background-color: rgba(52, 168, 83, 0.1);
+            color: var(--success);
+            display: block;
+        }
+        .formats {
+            font-size: 0.8rem;
+            color: #5F6368;
+            margin-top: 0.5rem;
         }
     </style>
 </head>
 <body>
-    <h1>Upload Image to Google Drive</h1>
+    <h1>Secure Image Upload</h1>
     
-    <div class="upload-box">
-        <input type="file" id="file-input" accept="image/*">
-        <p>Select an image file (JPEG, PNG)</p>
-        <img id="preview" alt="Image preview">
-        <button id="upload-btn" disabled>Upload to Drive</button>
-        <div class="status" id="status"></div>
+    <div class="upload-container">
+        <div id="drop-zone" class="drop-zone">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <h3>Drag & Drop your image here</h3>
+                <p>or click to browse files</p>
+                <p class="formats">Supported formats: JPG, JPEG, PNG (Max 10MB)</p>
+            </div>
+            <input type="file" id="file-input" accept=".jpg,.jpeg,.png,image/jpeg,image/png" style="display: none;">
+        </div>
+        
+        <div id="file-info" class="file-info" style="display: none;"></div>
+        
+        <img id="preview" alt="Preview">
+        
+        <div class="progress-container" id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        
+        <button id="upload-btn" disabled>Upload Image</button>
+        
+        <div id="status" class="status"></div>
     </div>
 
     <script>
+        // DOM Elements
+        const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const preview = document.getElementById('preview');
         const uploadBtn = document.getElementById('upload-btn');
         const status = document.getElementById('status');
+        const fileInfo = document.getElementById('file-info');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
         
-        // Your Google Apps Script URL
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwJAeTbcqNDDiPKn3qikBdHz4xU3qTH6bLA8AwzvjwKVFr06paNmr7mZ3szp8cdR83Ypw/exec';
+        // Google Apps Script URL
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyyTJS9RaWz_cI6sZN6r2TFoBx7DLGO_Fj1CAoxD6ptl3o1hBZS1ZxijXx_HZABi6tSwA/exec';
         
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(event) {
-                    preview.src = event.target.result;
-                    preview.style.display = 'block';
-                    uploadBtn.disabled = false;
-                    status.textContent = '';
-                }
-                
-                reader.readAsDataURL(file);
+        // Allowed file types (10MB max)
+        const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+        const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropZone.classList.add('active');
+        }
+        
+        function unhighlight() {
+            dropZone.classList.remove('active');
+            dropZone.classList.remove('reject');
+        }
+        
+        dropZone.addEventListener('drop', handleDrop, false);
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length) {
+                handleFiles(files);
+            }
+        }
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                handleFiles(fileInput.files);
             }
         });
         
-        uploadBtn.addEventListener('click', async function() {
+        // File handling
+        function handleFiles(files) {
+            resetUI();
+            
+            const file = files[0];
+            const fileType = file.type.toLowerCase();
+            const fileName = file.name.toLowerCase();
+            const fileExt = fileName.substring(fileName.lastIndexOf('.'));
+            
+            // Validate file
+            if (!ALLOWED_TYPES.includes(fileType) || !['.jpg', '.jpeg', '.png'].includes(fileExt)) {
+                showError('Invalid file type. Please upload JPG, JPEG, or PNG only.');
+                dropZone.classList.add('reject');
+                return;
+            }
+            
+            if (file.size > MAX_SIZE) {
+                showError('File too large. Maximum size is 10MB.');
+                dropZone.classList.add('reject');
+                return;
+            }
+            
+            // Show file info
+            fileInfo.style.display = 'block';
+            fileInfo.innerHTML = `
+                <strong>Selected file:</strong> ${file.name}<br>
+                <strong>Size:</strong> ${formatFileSize(file.size)}<br>
+                <strong>Type:</strong> ${fileType}
+            `;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                uploadBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Upload function
+        uploadBtn.addEventListener('click', async () => {
             const file = fileInput.files[0];
             if (!file) return;
             
             uploadBtn.disabled = true;
-            status.textContent = 'Uploading...';
+            status.style.display = 'none';
+            progressContainer.style.display = 'block';
             
-            try {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const base64Data = event.target.result.split(',')[1];
-                    
-                    fetch(scriptUrl, {
-                        method: 'POST',
-                        body: base64Data
-                    })
-                    .then(response => response.text())
-                    .then(result => {
-                        status.textContent = 'Upload successful!';
-                        console.log('Upload result:', result);
-                        uploadBtn.disabled = false;
-                    })
-                    .catch(error => {
-                        status.textContent = 'Upload failed';
-                        console.error('Error:', error);
-                        uploadBtn.disabled = false;
-                    });
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const base64Data = e.target.result.split(',')[1];
+                
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', scriptUrl, true);
+                
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const percentComplete = Math.round((e.loaded / e.total) * 100);
+                        progressBar.style.width = percentComplete + '%';
+                    }
                 };
-                reader.readAsDataURL(file);
-            } catch (error) {
-                status.textContent = 'Error: ' + error.message;
-                uploadBtn.disabled = false;
-                console.error(error);
-            }
+                
+                xhr.onload = () => {
+                    progressContainer.style.display = 'none';
+                    
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.status === "success") {
+                            showSuccess('Image uploaded successfully!');
+                            console.log('File URL:', response.fileUrl);
+                            resetFileInput();
+                        } else {
+                            showError(response.message || 'Upload failed');
+                        }
+                    } catch (e) {
+                        showError('Error processing server response');
+                        console.error(e);
+                    }
+                };
+                
+                xhr.onerror = () => {
+                    progressContainer.style.display = 'none';
+                    showError('Network error during upload');
+                };
+                
+                xhr.send(base64Data);
+            };
+            reader.readAsDataURL(file);
         });
+        
+        // Helper functions
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function showError(message) {
+            status.textContent = message;
+            status.className = 'status error';
+            status.style.display = 'block';
+            uploadBtn.disabled = false;
+        }
+        
+        function showSuccess(message) {
+            status.textContent = message;
+            status.className = 'status success';
+            status.style.display = 'block';
+        }
+        
+        function resetUI() {
+            preview.style.display = 'none';
+            fileInfo.style.display = 'none';
+            status.style.display = 'none';
+            progressContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+            uploadBtn.disabled = true;
+            unhighlight();
+        }
+        
+        function resetFileInput() {
+            fileInput.value = '';
+            uploadBtn.disabled = true;
+            fileInfo.style.display = 'none';
+            preview.style.display = 'none';
+        }
     </script>
 </body>
 </html>
