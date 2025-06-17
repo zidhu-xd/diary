@@ -12,7 +12,7 @@
         <form id="uploadForm" action="https://formspree.io/f/xkgbzwrw" method="POST" enctype="multipart/form-data" class="space-y-4">
             <label>
                 Your image:
-                <input type="file" name="image" accept="image/*" class="w-full p-2 border rounded" required>
+                <input type="file" name="image" accept="image/png,image/jpeg,image/gif" class="w-full p-2 border rounded" required>
             </label>
             <input type="text" name="_gotcha" style="display:none" aria-hidden="true">
             <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Send</button>
@@ -35,8 +35,8 @@
                 return;
             }
 
-            if (file.size > 10 * 1024 * 1024) {
-                status.textContent = 'File size exceeds 10MB limit.';
+            if (file.size > 25 * 1024 * 1024) {
+                status.textContent = 'File size exceeds 25MB limit.';
                 return;
             }
 
@@ -55,10 +55,10 @@
                     form.reset();
                 } else {
                     const errorData = await response.json();
-                    status.textContent = `Error: ${errorData.errors ? errorData.errors.map(e => e.message).join(', ') : 'Failed to send image.'}`;
+                    status.textContent = `Error: ${errorData.errors ? errorData.errors.map(e => e.message).join(', ') : 'File uploads may not be permitted. Check Formspree plan or spam settings.'}`;
                 }
             } catch (error) {
-                status.textContent = 'Error uploading image: Network or server issue.';
+                status.textContent = 'Error uploading image: Network or server issue. Try again.';
                 console.error(error);
             }
         });
