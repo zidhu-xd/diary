@@ -27,6 +27,10 @@
             text-align: center;
             padding: 20px;
         }
+        #question-number {
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
         #question-text {
             font-size: 16px;
             margin-bottom: 20px;
@@ -66,17 +70,6 @@
             padding: 20px;
             text-align: center;
         }
-        .popup-button {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #00ff00;
-            color: black;
-            cursor: pointer;
-        }
-        .popup-button:hover {
-            background-color: white;
-            color: #00ff00;
-        }
         img {
             image-rendering: pixelated;
             max-width: 100%;
@@ -86,6 +79,7 @@
 <body>
     <div id="game-container">
         <div id="question-container">
+            <p id="question-number"></p>
             <p id="question-text"></p>
             <div id="options-container">
                 <button class="option-button"></button>
@@ -94,16 +88,10 @@
                 <button class="option-button"></button>
             </div>
         </div>
-        <div id="game-over-popup" class="popup">
+        <div id="results-popup" class="popup">
             <div class="popup-content">
-                <img src="gameover.png" alt="Game Over">
-                <div class="popup-button" onclick="window.location.href='index.html'">Exit</div>
-            </div>
-        </div>
-        <div id="win-popup" class="popup">
-            <div class="popup-content">
-                <img src="wonxd.gif" alt="Won">
-                <div class="popup-button" onclick="nextQuestion()">Next</div>
+                <img src="runrun.gif" alt="Loading">
+                <p id="results-text">Uploading your answers to our server</p>
             </div>
         </div>
     </div>
@@ -113,7 +101,7 @@
             { question: "My favorite flower?", options: ["Rose", "Lily", "Daisy", "Tulip"], correct: 0 },
             { question: "Where we first kissed?", options: ["Car", "Park", "Home", "Party"], correct: 1 },
             { question: "Your pet’s name?", options: ["Max", "Luna", "Bella", "Charlie"], correct: 2 },
-            { question: "Our song?", options: ["Pop", "Rock", "Jazz", "Blues"], correct: 4 },
+            { question: "Our song?", options: ["Pop", "Rock", "Jazz", "Blues"], correct: 0 },
             { question: "Favorite dessert?", options: ["Cake", "Ice", "Pie", "Cookie"], correct: 1 },
             { question: "Dream vacation?", options: ["Paris", "Beach", "Mountains", "City"], correct: 0 },
             { question: "My nickname for you?", options: ["Babe", "Sweet", "Love", "Honey"], correct: 3 },
@@ -126,39 +114,42 @@
             { question: "My hobby?", options: ["Art", "Games", "Cook", "Dance"], correct: 1 }
         ];
         let currentQuestion = 0;
-        let timeoutId;
+        let userAnswers = [];
 
         function loadQuestion(index) {
             const q = questions[index];
+            document.getElementById("question-number").innerText = `Question ${index + 1} of ${questions.length}`;
             document.getElementById("question-text").innerText = q.question;
             const buttons = document.querySelectorAll(".option-button");
             buttons.forEach((button, i) => {
                 button.innerText = q.options[i];
-                button.onclick = () => checkAnswer(i, q.correct);
+                button.onclick = () => checkAnswer(i);
             });
         }
 
-        function checkAnswer(selected, correct) {
-            if (selected === correct) {
-                document.getElementById("win-popup").style.display = "block";
-                timeoutId = setTimeout(() => {
-                    document.getElementById("win-popup").style.display = "none";
-                    nextQuestion();
-                }, 3000);
-            } else {
-                document.getElementById("game-over-popup").style.display = "block";
-            }
+        function checkAnswer(selected) {
+            userAnswers.push(selected);
+            nextQuestion();
         }
 
         function nextQuestion() {
-            clearTimeout(timeoutId);
-            document.getElementById("win-popup").style.display = "none";
             currentQuestion++;
             if (currentQuestion < questions.length) {
                 loadQuestion(currentQuestion);
             } else {
-                alert("Aww, you got them all! I love you!");
+                showResults();
             }
+        }
+
+        function showResults() {
+            document.getElementById("results-popup").style.display = "block";
+            setTimeout(() => {
+                document.getElementById("results-text").innerText = "Checking the answers";
+                setTimeout(() => {
+                    const score = userAnswers.filter((ans, i) => ans === questions[i].correct).length;
+                    document.getElementById("results-text").innerText = `You got ${score} out of ${questions.length} correct`;
+                }, 2000);
+            }, 1500);
         }
 
         loadQuestion(currentQuestion);
