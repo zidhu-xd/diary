@@ -34,6 +34,11 @@
             font-size: 16px;
             margin-bottom: 20px;
         }
+        #timer {
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #ff0000;
+        }
         .option-button {
             display: block;
             width: 80%;
@@ -69,6 +74,20 @@
             padding: 20px;
             text-align: center;
         }
+        .restart-button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #00ff00;
+            color: black;
+            border: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .restart-button:hover {
+            background-color: white;
+            color: #00ff00;
+        }
         img {
             image-rendering: pixelated;
             max-width: 100%;
@@ -79,6 +98,7 @@
     <div id="game-container">
         <div id="question-container">
             <p id="question-number"></p>
+            <p id="timer"></p>
             <p id="question-text"></p>
             <div id="options-container">
                 <button class="option-button"></button>
@@ -91,6 +111,13 @@
             <div class="popup-content">
                 <img id="popup-image" src="runrun.gif" alt="Loading">
                 <p id="results-text">Uploading your answers to our server</p>
+            </div>
+        </div>
+        <div id="time-over-popup" class="popup">
+            <div class="popup-content">
+                <img src="gameover.jpg" alt="Game Over">
+                <p>Time Over, Start from Beginning</p>
+                <button class="restart-button" onclick="restartQuiz()">Restart</button>
             </div>
         </div>
     </div>
@@ -114,6 +141,36 @@
         ];
         let currentQuestion = 0;
         let userAnswers = [];
+        let timer;
+        let timeLeft = 25;
+
+        function startTimer() {
+            clearInterval(timer);
+            timeLeft = 25;
+            document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    showTimeOver();
+                }
+            }, 1000);
+        }
+
+        function showTimeOver() {
+            document.getElementById("time-over-popup").style.display = "block";
+            document.getElementById("question-container").style.display = "none";
+        }
+
+        function restartQuiz() {
+            document.getElementById("time-over-popup").style.display = "none";
+            document.getElementById("question-container").style.display = "block";
+            currentQuestion = 0;
+            userAnswers = [];
+            loadQuestion(currentQuestion);
+            startTimer();
+        }
 
         function loadQuestion(index) {
             const q = questions[index];
@@ -124,9 +181,11 @@
                 button.innerText = q.options[i];
                 button.onclick = () => checkAnswer(i);
             });
+            startTimer();
         }
 
         function checkAnswer(selected) {
+            clearInterval(timer);
             userAnswers.push(selected);
             nextQuestion();
         }
