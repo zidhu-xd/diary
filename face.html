@@ -14,40 +14,59 @@
   <h2>Upload a Photo</h2>
   <input type="file" id="imageUpload" accept="image/*" />
   <br />
-  <button id="submitBtn">Submit</button>
+  <button id="submitBtn" disabled>Submit</button>
   <div id="error"></div>
 
   <script>
     let selectedImage = null;
+    let modelsLoaded = false;
 
-    // Load model
+    // Load models
     Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri('/models')
-    ]).then(() => {
-      console.log("Models loaded");
+    ])
+    .then(() => {
+      modelsLoaded = true;
+      console.log("✅ Models loaded");
+      document.getElementById('submitBtn').disabled = false;
+    })
+    .catch(err => {
+      document.getElementById('error').innerText = "❌ Failed to load models.";
+      console.error("Model load error:", err);
     });
 
     // Store selected file
     document.getElementById('imageUpload').addEventListener('change', function () {
       selectedImage = this.files[0];
+      document.getElementById('error').innerText = '';
     });
 
     // Handle submit
     document.getElementById('submitBtn').addEventListener('click', async function () {
       const errorDiv = document.getElementById('error');
 
+      if (!modelsLoaded) {
+        errorDiv.innerText = "❌ Models not loaded yet. Try again in a few seconds.";
+        return;
+      }
+
       if (!selectedImage) {
         errorDiv.innerText = "❌ Please upload an image first!";
         return;
       }
 
-      const img = await faceapi.bufferToImage(selectedImage);
-      const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions());
+      try {
+        const img = await faceapi.bufferToImage(selectedImage);
+        const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions());
 
-      if (detections.length === 0) {
-        errorDiv.innerText = "❌ No human face detected!";
-      } else {
-        window.location.href = "heuc.html";
+        if (detections.length === 0) {
+          errorDiv.innerText = "❌ No human face detected!";
+        } else {
+          window.location.href = "heuc.html";
+        }
+      } catch (err) {
+        errorDiv.innerText = "❌ Error processing the image.";
+        console.error("Face detection error:", err);
       }
     });
   </script>
