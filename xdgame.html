@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Memory Quiz for My Love</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@700&display=swap" rel="stylesheet">
@@ -18,12 +18,14 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            touch-action: none; /* Disable pinch-to-zoom */
         }
         #game-container {
-            width: 640px;
-            height: 480px;
+            max-width: 100vw;
+            max-height: 80vh;
             position: relative;
             background-color: black;
+            box-sizing: border-box;
         }
         #question-container {
             text-align: center;
@@ -82,6 +84,9 @@
             padding: 20px;
             text-align: center;
             color: #00ff00; /* Green for popup text */
+            max-width: 90%;
+            max-height: 80vh;
+            box-sizing: border-box;
         }
         #results-popup .popup-content {
             font-family: 'Rounded Mplus 1c', sans-serif;
@@ -109,7 +114,7 @@
             margin-top: 10px;
             cursor: pointer;
             image-rendering: pixelated;
-            max-width: 100px; /* 20% larger than 100px */
+            max-width: 100px;
         }
         img {
             image-rendering: pixelated;
@@ -124,11 +129,35 @@
             font-size: 15px;
             text-align: center;
             animation: heartbeat 2s infinite;
+            border: 2px solid #00ff00; /* Green frame */
+            border-radius: 5px;
+            padding: 5px;
         }
         @keyframes heartbeat {
             0% { transform: scale(1); }
             50% { transform: scale(1.2); }
             100% { transform: scale(1); }
+        }
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 600px) {
+            #question-container {
+                padding: 10px;
+            }
+            #question-text {
+                font-size: 14px;
+            }
+            .option-button {
+                width: 90%;
+                font-size: 12px;
+                padding: 8px;
+            }
+            #question-number, #timer {
+                font-size: 10px;
+            }
+            .popup-content {
+                padding: 15px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -198,8 +227,14 @@
 
         function startQuiz() {
             document.getElementById("intro-popup").style.display = "none";
-            document.getElementById("question-container").style.display = "block";
-            loadQuestion(currentQuestion);
+            // Disable option buttons initially to prevent accidental clicks
+            const buttons = document.querySelectorAll(".option-button");
+            buttons.forEach(btn => btn.disabled = true);
+            // Add 500ms delay before showing question
+            setTimeout(() => {
+                document.getElementById("question-container").style.display = "block";
+                loadQuestion(currentQuestion);
+            }, 500);
         }
 
         function startTimer() {
@@ -238,7 +273,7 @@
             buttons.forEach((button, i) => {
                 button.innerText = q.options[i];
                 button.onclick = button.ontouchstart = () => checkAnswer(i, button);
-                button.disabled = false;
+                button.disabled = false; // Re-enable buttons after loading
                 button.style.backgroundColor = '#ffffff'; // White background
                 button.style.color = 'black';
             });
