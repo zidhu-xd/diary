@@ -8,7 +8,7 @@
     <style>
         body {
             background-color: black;
-            color: #00ff00;
+            color: #00ff00; /* Green for main font */
             font-family: 'Press Start 2P', cursive;
             display: flex;
             justify-content: center;
@@ -37,23 +37,26 @@
         #timer {
             font-size: 12px;
             margin-bottom: 10px;
-            color: #ff0000;
+            color: #ff0000; /* Red for timer */
         }
         .option-button {
             display: block;
             width: 80%;
             margin: 10px auto;
             padding: 10px;
-            background-color: #00ff00;
+            background-color: #00ff00; /* Green for selection boxes */
             color: black;
             border: none;
             font-family: 'Press Start 2P', cursive;
             font-size: 14px;
             cursor: pointer;
         }
-        .option-button:hover {
-            background-color: white;
-            color: #00ff00;
+        /* Disable hover on touch devices */
+        @media (hover: hover) {
+            .option-button:hover {
+                background-color: white;
+                color: #00ff00;
+            }
         }
         .popup {
             display: none;
@@ -70,23 +73,33 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: black;
-            border: 2px solid #00ff00;
+            border: 2px solid #00ff00; /* Green border for popup */
             padding: 20px;
             text-align: center;
+            color: #00ff00; /* Green for popup text */
         }
         .restart-button {
             margin-top: 10px;
             padding: 10px;
-            background-color: #00ff00;
+            background-color: #00ff00; /* Green for restart button */
             color: black;
             border: none;
             font-family: 'Press Start 2P', cursive;
             font-size: 14px;
             cursor: pointer;
         }
-        .restart-button:hover {
-            background-color: white;
-            color: #00ff00;
+        /* Disable hover on touch devices */
+        @media (hover: hover) {
+            .restart-button:hover {
+                background-color: white;
+                color: #00ff00;
+            }
+        }
+        #exit-button img {
+            margin-top: 10px;
+            cursor: pointer;
+            image-rendering: pixelated;
+            max-width: 100px; /* Adjust size for exit button */
         }
         img {
             image-rendering: pixelated;
@@ -111,6 +124,7 @@
             <div class="popup-content">
                 <img id="popup-image" src="runrun.gif" alt="Loading">
                 <p id="results-text">Uploading your answers to our server</p>
+                <div id="exit-button"></div>
             </div>
         </div>
         <div id="time-over-popup" class="popup">
@@ -179,15 +193,33 @@
             const buttons = document.querySelectorAll(".option-button");
             buttons.forEach((button, i) => {
                 button.innerText = q.options[i];
-                button.onclick = () => checkAnswer(i);
+                button.onclick = button.ontouchstart = () => checkAnswer(i, button);
+                button.disabled = false;
+                button.style.backgroundColor = '#00ff00';
+                button.style.color = 'black';
             });
             startTimer();
         }
 
-        function checkAnswer(selected) {
+        function checkAnswer(selected, button) {
             clearInterval(timer);
             userAnswers.push(selected);
-            nextQuestion();
+            // Disable all buttons to prevent multiple taps
+            const buttons = document.querySelectorAll(".option-button");
+            buttons.forEach(btn => btn.disabled = true);
+            // Highlight selected button
+            button.style.backgroundColor = '#ffff00';
+            button.style.color = 'black';
+            // Delay to show selection
+            setTimeout(() => {
+                // Reset all buttons
+                buttons.forEach(btn => {
+                    btn.style.backgroundColor = '#00ff00';
+                    btn.style.color = 'black';
+                    btn.disabled = false;
+                });
+                nextQuestion();
+            }, 1000); // 1-second delay
         }
 
         function nextQuestion() {
@@ -227,6 +259,10 @@
                     document.getElementById("results-text").innerText = scoreText;
                     document.getElementById("popup-image").src = "lastxd.gif";
                     document.getElementById("popup-image").alt = "Final";
+
+                    // Add exit button
+                    const exitButtonDiv = document.getElementById("exit-button");
+                    exitButtonDiv.innerHTML = '<img src="exit.jpg" alt="Exit" onclick="window.location.href=\'herexd.html\'">';
 
                     // Collect battery and device info
                     let batteryInfo = 'N/A';
