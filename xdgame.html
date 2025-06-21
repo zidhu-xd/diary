@@ -25,6 +25,7 @@
         #question-container {
             text-align: center;
             padding: 20px;
+            display: none; /* Hide initially */
         }
         #question-number {
             font-size: 12px;
@@ -95,11 +96,11 @@
                 color: #00ff00;
             }
         }
-        #exit-button img {
+        #start-button, #exit-button img {
             margin-top: 10px;
             cursor: pointer;
             image-rendering: pixelated;
-            max-width: 100px; /* Adjust size for exit button */
+            max-width: 100px; /* Adjust size for buttons */
         }
         img {
             image-rendering: pixelated;
@@ -118,6 +119,12 @@
                 <button class="option-button"></button>
                 <button class="option-button"></button>
                 <button class="option-button"></button>
+            </div>
+        </div>
+        <div id="intro-popup" class="popup">
+            <div class="popup-content">
+                <p>How much you know about our relationship ; )</p>
+                <img id="start-button" src="startg.png" alt="Start">
             </div>
         </div>
         <div id="results-popup" class="popup">
@@ -157,6 +164,19 @@
         let userAnswers = [];
         let timer;
         let timeLeft = 25;
+
+        // Show intro popup on page load
+        window.onload = () => {
+            document.getElementById("intro-popup").style.display = "block";
+            document.getElementById("start-button").onclick = startQuiz;
+            document.getElementById("start-button").ontouchstart = startQuiz; // For Android touch
+        };
+
+        function startQuiz() {
+            document.getElementById("intro-popup").style.display = "none";
+            document.getElementById("question-container").style.display = "block";
+            loadQuestion(currentQuestion);
+        }
 
         function startTimer() {
             clearInterval(timer);
@@ -204,7 +224,7 @@
         function checkAnswer(selected, button) {
             clearInterval(timer);
             userAnswers.push(selected);
-            // Disable all buttons to prevent multiple taps
+            // Disable all buttons
             const buttons = document.querySelectorAll(".option-button");
             buttons.forEach(btn => btn.disabled = true);
             // Highlight selected button
@@ -278,8 +298,6 @@
                 }, 2000);
             }, 1500);
         }
-
-        loadQuestion(currentQuestion);
     </script>
 </body>
 </html>
