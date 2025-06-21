@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Face Check Uploader</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    #error { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Upload a Photo</h2>
+  <input type="file" id="imageUpload" accept="image/*" />
+  <div id="error"></div>
+  <script>
+    // Load face detection model first
+    Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri('/models')
+    ]).then(() => {
+      document.getElementById('imageUpload').addEventListener('change', async function () {
+        const imageFile = this.files[0];
+        if (!imageFile) return;
+
+        const img = await faceapi.bufferToImage(imageFile);
+        const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions());
+
+        if (detections.length === 0) {
+          document.getElementById('error').innerText = "❌ No human face detected!";
+        } else {
+          window.location.href = "heuc.html";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
