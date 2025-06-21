@@ -2,30 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Face Detection</title>
-  <!-- ✅ Load from official CDN -->
+  <title>Face Detector</title>
   <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
-    #error { color: red; font-weight: bold; margin-top: 15px; }
+    body { font-family: sans-serif; text-align: center; margin-top: 40px; }
+    #error { color: red; font-weight: bold; margin-top: 20px; }
     button { padding: 10px 20px; margin-top: 20px; }
   </style>
 </head>
 <body>
   <h2>Upload a Photo</h2>
-  <input type="file" id="imageUpload" accept="image/*" />
-  <br/>
+  <input type="file" id="imageUpload" accept="image/*">
+  <br>
   <button id="submitBtn" disabled>Submit</button>
   <div id="error"></div>
 
   <script>
     let selectedImage = null;
+    let modelsLoaded = false;
 
+    // Load only the face detection model
     Promise.all([
-      faceapi.nets.tinyFaceDetector.loadFromUri('/models')
-    ]).then(() => {
-      console.log("✅ Models Loaded");
+      faceapi.nets.tinyFaceDetector.loadFromUri('/diary/models')
+    ])
+    .then(() => {
+      modelsLoaded = true;
       document.getElementById('submitBtn').disabled = false;
+      console.log("✅ Models loaded");
+    })
+    .catch(err => {
+      document.getElementById('error').innerText = "❌ Failed to load models";
+      console.error("Model load error:", err);
     });
 
     document.getElementById('imageUpload').addEventListener('change', function () {
@@ -36,8 +43,13 @@
     document.getElementById('submitBtn').addEventListener('click', async () => {
       const errorDiv = document.getElementById('error');
 
+      if (!modelsLoaded) {
+        errorDiv.innerText = "❌ Models not loaded yet!";
+        return;
+      }
+
       if (!selectedImage) {
-        errorDiv.innerText = "❌ Please upload an image!";
+        errorDiv.innerText = "❌ Please select an image.";
         return;
       }
 
@@ -46,12 +58,12 @@
         const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions());
 
         if (detections.length === 0) {
-          errorDiv.innerText = "❌ No face found!";
+          errorDiv.innerText = "❌ No human face detected!";
         } else {
           window.location.href = "heuc.html";
         }
-      } catch (err) {
-        console.error(err);
+      } catch (e) {
+        console.error(e);
         errorDiv.innerText = "❌ Error processing image.";
       }
     });
