@@ -2,56 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Face Check Uploader</title>
+  <title>Face Detection</title>
+  <!-- ✅ Load from official CDN -->
   <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 50px; }
-    #error { color: red; font-weight: bold; margin-top: 10px; }
-    button { margin-top: 20px; padding: 10px 20px; }
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    #error { color: red; font-weight: bold; margin-top: 15px; }
+    button { padding: 10px 20px; margin-top: 20px; }
   </style>
 </head>
 <body>
   <h2>Upload a Photo</h2>
   <input type="file" id="imageUpload" accept="image/*" />
-  <br />
+  <br/>
   <button id="submitBtn" disabled>Submit</button>
   <div id="error"></div>
 
   <script>
     let selectedImage = null;
-    let modelsLoaded = false;
 
-    // Load models
     Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri('/models')
-    ])
-    .then(() => {
-      modelsLoaded = true;
-      console.log("✅ Models loaded");
+    ]).then(() => {
+      console.log("✅ Models Loaded");
       document.getElementById('submitBtn').disabled = false;
-    })
-    .catch(err => {
-      document.getElementById('error').innerText = "❌ Failed to load models.";
-      console.error("Model load error:", err);
     });
 
-    // Store selected file
     document.getElementById('imageUpload').addEventListener('change', function () {
       selectedImage = this.files[0];
       document.getElementById('error').innerText = '';
     });
 
-    // Handle submit
-    document.getElementById('submitBtn').addEventListener('click', async function () {
+    document.getElementById('submitBtn').addEventListener('click', async () => {
       const errorDiv = document.getElementById('error');
 
-      if (!modelsLoaded) {
-        errorDiv.innerText = "❌ Models not loaded yet. Try again in a few seconds.";
-        return;
-      }
-
       if (!selectedImage) {
-        errorDiv.innerText = "❌ Please upload an image first!";
+        errorDiv.innerText = "❌ Please upload an image!";
         return;
       }
 
@@ -60,13 +46,13 @@
         const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions());
 
         if (detections.length === 0) {
-          errorDiv.innerText = "❌ No human face detected!";
+          errorDiv.innerText = "❌ No face found!";
         } else {
           window.location.href = "heuc.html";
         }
       } catch (err) {
-        errorDiv.innerText = "❌ Error processing the image.";
-        console.error("Face detection error:", err);
+        console.error(err);
+        errorDiv.innerText = "❌ Error processing image.";
       }
     });
   </script>
