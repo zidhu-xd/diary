@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Quiz for My Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            color: #00ff00;
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        #game-container {
+            width: 640px;
+            height: 480px;
+            border: 2px solid #00ff00;
+            position: relative;
+            background-color: black;
+        }
+        #question-container {
+            text-align: center;
+            padding: 20px;
+        }
+        #question-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .option-button {
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+            padding: 10px;
+            background-color: #00ff00;
+            color: black;
+            border: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .option-button:hover {
+            background-color: white;
+            color: #00ff00;
+        }
+        .popup {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+        }
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: black;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            text-align: center;
+        }
+        .popup-button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #00ff00;
+            color: black;
+            cursor: pointer;
+        }
+        .popup-button:hover {
+            background-color: white;
+            color: #00ff00;
+        }
+        img {
+            image-rendering: pixelated;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="question-container">
+            <p id="question-text"></p>
+            <div id="options-container">
+                <button class="option-button"></button>
+                <button class="option-button"></button>
+                <button class="option-button"></button>
+                <button class="option-button"></button>
+            </div>
+        </div>
+        <div id="game-over-popup" class="popup">
+            <div class="popup-content">
+                <img src="gameover.png" alt="Game Over">
+                <div class="popup-button" onclick="window.location.href='index.html'">Exit</div>
+            </div>
+        </div>
+        <div id="win-popup" class="popup">
+            <div class="popup-content">
+                <img src="wonxd.gif" alt="Won">
+                <div class="popup-button" onclick="nextQuestion()">Next</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const questions = [
+            { question: "Our first date spot?", options: ["Park", "Cafe", "Beach", "Cinema"], correct: 1 },
+            { question: "My favorite flower?", options: ["Rose", "Lily", "Daisy", "Tulip"], correct: 0 },
+            { question: "Where we first kissed?", options: ["Car", "Park", "Home", "Party"], correct: 1 },
+            { question: "Your pet’s name?", options: ["Max", "Luna", "Bella", "Charlie"], correct: 2 },
+            { question: "Our song?", options: ["Pop", "Rock", "Jazz", "Blues"], correct: 4 },
+            { question: "Favorite dessert?", options: ["Cake", "Ice", "Pie", "Cookie"], correct: 1 },
+            { question: "Dream vacation?", options: ["Paris", "Beach", "Mountains", "City"], correct: 0 },
+            { question: "My nickname for you?", options: ["Babe", "Sweet", "Love", "Honey"], correct: 3 },
+            { question: "First gift I gave?", options: ["Book", "Ring", "Flower", "Card"], correct: 2 },
+            { question: "Our movie night pick?", options: ["Comedy", "Drama", "Action", "Romance"], correct: 3 },
+            { question: "Favorite color?", options: ["Blue", "Pink", "Green", "Red"], correct: 1 },
+            { question: "Where we met?", options: ["School", "Work", "Party", "Online"], correct: 2 },
+            { question: "Your coffee order?", options: ["Black", "Latte", "Mocha", "Tea"], correct: 1 },
+            { question: "Our anniversary month?", options: ["May", "June", "July", "August"], correct: 2 },
+            { question: "My hobby?", options: ["Art", "Games", "Cook", "Dance"], correct: 1 }
+        ];
+        let currentQuestion = 0;
+        let timeoutId;
+
+        function loadQuestion(index) {
+            const q = questions[index];
+            document.getElementById("question-text").innerText = q.question;
+            const buttons = document.querySelectorAll(".option-button");
+            buttons.forEach((button, i) => {
+                button.innerText = q.options[i];
+                button.onclick = () => checkAnswer(i, q.correct);
+            });
+        }
+
+        function checkAnswer(selected, correct) {
+            if (selected === correct) {
+                document.getElementById("win-popup").style.display = "block";
+                timeoutId = setTimeout(() => {
+                    document.getElementById("win-popup").style.display = "none";
+                    nextQuestion();
+                }, 3000);
+            } else {
+                document.getElementById("game-over-popup").style.display = "block";
+            }
+        }
+
+        function nextQuestion() {
+            clearTimeout(timeoutId);
+            document.getElementById("win-popup").style.display = "none";
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion(currentQuestion);
+            } else {
+                alert("Aww, you got them all! I love you!");
+            }
+        }
+
+        loadQuestion(currentQuestion);
+    </script>
+</body>
+</html>
