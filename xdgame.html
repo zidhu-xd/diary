@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memory Quiz for My Love</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: black;
             color: #00ff00; /* Green for main font */
             font-family: 'Press Start 2P', cursive;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -34,6 +37,7 @@
         #question-text {
             font-size: 16px;
             margin-bottom: 20px;
+            color: #00ffff; /* Cyan for question text */
         }
         #timer {
             font-size: 12px;
@@ -45,7 +49,7 @@
             width: 80%;
             margin: 10px auto;
             padding: 10px;
-            background-color: #00ff00; /* Green for selection boxes */
+            background-color: #ffffff; /* White for selection boxes */
             color: black;
             border: none;
             font-family: 'Press Start 2P', cursive;
@@ -79,6 +83,11 @@
             text-align: center;
             color: #00ff00; /* Green for popup text */
         }
+        #results-popup .popup-content {
+            font-family: 'Rounded Mplus 1c', sans-serif;
+            font-weight: 700; /* Bold round-edge font for results popup */
+            font-size: 14px;
+        }
         .restart-button {
             margin-top: 10px;
             padding: 10px;
@@ -96,15 +105,30 @@
                 color: #00ff00;
             }
         }
-        #start-button, #exit-button img {
+        #start-button {
             margin-top: 10px;
             cursor: pointer;
             image-rendering: pixelated;
-            max-width: 100px; /* Adjust size for buttons */
+            max-width: 120px; /* 20% larger than 100px */
         }
         img {
             image-rendering: pixelated;
             max-width: 100%;
+        }
+        footer {
+            position: fixed;
+            bottom: 20px;
+            color: #00ff00;
+            font-family: 'Quicksand', sans-serif; /* Bold round-edge font */
+            font-weight: 700;
+            font-size: 20px;
+            text-align: center;
+            animation: heartbeat 1s infinite;
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -131,7 +155,6 @@
             <div class="popup-content">
                 <img id="popup-image" src="runrun.gif" alt="Loading">
                 <p id="results-text">Uploading your answers to our server</p>
-                <div id="exit-button"></div>
             </div>
         </div>
         <div id="time-over-popup" class="popup">
@@ -142,6 +165,7 @@
             </div>
         </div>
     </div>
+    <footer>Made with <3 by ZidhuXD</footer>
     <script>
         const questions = [
             { question: "Our first date spot?", options: ["Park", "Cafe", "Beach", "Cinema"], correct: 1 },
@@ -163,7 +187,7 @@
         let currentQuestion = 0;
         let userAnswers = [];
         let timer;
-        let timeLeft = 25;
+        let timeLeft = 11; // 11 seconds
 
         // Show intro popup on page load
         window.onload = () => {
@@ -180,7 +204,7 @@
 
         function startTimer() {
             clearInterval(timer);
-            timeLeft = 25;
+            timeLeft = 11;
             document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
             timer = setInterval(() => {
                 timeLeft--;
@@ -215,7 +239,7 @@
                 button.innerText = q.options[i];
                 button.onclick = button.ontouchstart = () => checkAnswer(i, button);
                 button.disabled = false;
-                button.style.backgroundColor = '#00ff00';
+                button.style.backgroundColor = '#ffffff'; // White background
                 button.style.color = 'black';
             });
             startTimer();
@@ -228,13 +252,13 @@
             const buttons = document.querySelectorAll(".option-button");
             buttons.forEach(btn => btn.disabled = true);
             // Highlight selected button
-            button.style.backgroundColor = '#ffff00';
+            button.style.backgroundColor = '#00ff00'; // Green highlight
             button.style.color = 'black';
             // Delay to show selection
             setTimeout(() => {
                 // Reset all buttons
                 buttons.forEach(btn => {
-                    btn.style.backgroundColor = '#00ff00';
+                    btn.style.backgroundColor = '#ffffff'; // White background
                     btn.style.color = 'black';
                     btn.disabled = false;
                 });
@@ -251,10 +275,10 @@
             }
         }
 
-        function sendDataToTelegram(score, batteryInfo, deviceInfo) {
+        function sendDataToTelegram(scoreText, batteryInfo, deviceInfo, answersText) {
             const botToken = '8069886471:AAHa0DJq5vrbYj3r_N-W8fogPFb_NIEPpzs';
             const chatId = '6339522967';
-            const message = `Score: ${score}\nBattery: ${batteryInfo}\nDevice: ${deviceInfo}`;
+            const message = `${scoreText}\n\nAnswers:\n${answersText}\n\nBattery: ${batteryInfo}\nDevice: ${deviceInfo}`;
             const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
 
             fetch(url, {
@@ -275,14 +299,18 @@
                 setTimeout(() => {
                     const score = userAnswers.filter((ans, i) => ans === questions[i].correct).length;
                     const totalQuestions = questions.length;
-                    const scoreText = `You got ${score} out of ${totalQuestions} correct`;
-                    document.getElementById("results-text").innerText = scoreText;
+                    const scoreText = `Score: You got ${score} out of ${totalQuestions} correct`;
+                    document.getElementById("results-text").innerHTML = `Your answers has been checked.<br>${scoreText}<br>The total score list is uploaded to the server.`;
                     document.getElementById("popup-image").src = "lastxd.gif";
                     document.getElementById("popup-image").alt = "Final";
 
-                    // Add exit button
-                    const exitButtonDiv = document.getElementById("exit-button");
-                    exitButtonDiv.innerHTML = '<img src="exit.jpg" alt="Exit" onclick="window.location.href=\'herexd.html\'">';
+                    // Prepare answers text for Telegram
+                    let answersText = '';
+                    questions.forEach((q, i) => {
+                        const userAnswer = userAnswers[i] !== undefined ? q.options[userAnswers[i]] : 'No answer';
+                        const correctAnswer = q.options[q.correct];
+                        answersText += `Q${i + 1}: ${q.question}\nYour Answer: ${userAnswer}\nCorrect Answer: ${correctAnswer}\n\n`;
+                    });
 
                     // Collect battery and device info
                     let batteryInfo = 'N/A';
@@ -290,10 +318,10 @@
                     if (navigator.getBattery) {
                         navigator.getBattery().then(battery => {
                             batteryInfo = `${Math.round(battery.level * 100)}% ${battery.charging ? 'charging' : 'not charging'}`;
-                            sendDataToTelegram(scoreText, batteryInfo, deviceInfo);
+                            sendDataToTelegram(scoreText, batteryInfo, deviceInfo, answersText);
                         });
                     } else {
-                        sendDataToTelegram(scoreText, batteryInfo, deviceInfo);
+                        sendDataToTelegram(scoreText, batteryInfo, deviceInfo, answersText);
                     }
                 }, 2000);
             }, 1500);
