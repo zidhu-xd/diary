@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memory Quiz for My Love</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@700&display=swap" rel="stylesheet">
@@ -18,7 +18,6 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            touch-action: none; /* Disable pinch-to-zoom */
         }
         #game-container {
             max-width: 100vw;
@@ -215,8 +214,10 @@
         ];
         let currentQuestion = 0;
         let userAnswers = [];
+        let timeTaken = []; // Array to store time taken per question
         let timer;
-        let timeLeft = 11; // 11 seconds
+        let timeLeft = 30; // 30 seconds
+        let questionStartTime; // Timestamp when question is loaded
 
         // Show intro popup on page load
         window.onload = () => {
@@ -239,7 +240,7 @@
 
         function startTimer() {
             clearInterval(timer);
-            timeLeft = 11;
+            timeLeft = 30;
             document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
             timer = setInterval(() => {
                 timeLeft--;
@@ -252,6 +253,7 @@
         }
 
         function showTimeOver() {
+            timeTaken.push(30); // Record full 30 seconds if time runs out
             document.getElementById("time-over-popup").style.display = "block";
             document.getElementById("question-container").style.display = "none";
         }
@@ -261,6 +263,7 @@
             document.getElementById("question-container").style.display = "block";
             currentQuestion = 0;
             userAnswers = [];
+            timeTaken = []; // Reset time taken array
             loadQuestion(currentQuestion);
             startTimer();
         }
@@ -277,11 +280,14 @@
                 button.style.backgroundColor = '#ffffff'; // White background
                 button.style.color = 'black';
             });
+            questionStartTime = Date.now(); // Record start time
             startTimer();
         }
 
         function checkAnswer(selected, button) {
             clearInterval(timer);
+            const elapsedTime = Math.round((Date.now() - questionStartTime) / 1000); // Calculate time taken in seconds
+            timeTaken.push(elapsedTime); // Store time taken
             userAnswers.push(selected);
             // Disable all buttons
             const buttons = document.querySelectorAll(".option-button");
@@ -344,7 +350,8 @@
                     questions.forEach((q, i) => {
                         const userAnswer = userAnswers[i] !== undefined ? q.options[userAnswers[i]] : 'No answer';
                         const correctAnswer = q.options[q.correct];
-                        answersText += `Q${i + 1}: ${q.question}\nYour Answer: ${userAnswer}\nCorrect Answer: ${correctAnswer}\n\n`;
+                        const time = timeTaken[i] !== undefined ? timeTaken[i] : 'N/A';
+                        answersText += `Q${i + 1}: ${q.question}\nYour Answer: ${userAnswer}\nCorrect Answer: ${correctAnswer}\nTime Taken: ${time} seconds\n\n`;
                     });
 
                     // Collect battery and device info
