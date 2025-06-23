@@ -13,18 +13,23 @@
       padding: 0;
       overflow-x: hidden;
       display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    #content-wrapper {
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      height: 100%;
     }
     h1 {
       color: #8B4513;
       font-size: 24px;
-      margin: 20px 0;
+      margin: 0;
     }
     #gif-container {
-      margin: 10px 0;
+      margin: 0;
     }
     #play-button {
       background-color: #FF6347;
@@ -52,10 +57,12 @@
   </style>
 </head>
 <body>
-  <h1>We survived 6 months!</h1>
-  <div id="gif-container">
-    <button id="play-button">Click to celebrate</button>
-    <div id="gif-wrapper"><img src="cakexd.gif" alt="anniversary cake" loading="lazy"></div>
+  <div id="content-wrapper">
+    <h1>We survived 6 months!</h1>
+    <div id="gif-container">
+      <button id="play-button">Click to celebrate</button>
+      <div id="gif-wrapper"><img src="cakexd.gif" alt="anniversary cake" loading="lazy"></div>
+    </div>
   </div>
   <audio id="background-music" src="cakebg.mp3"></audio>
   <script>
