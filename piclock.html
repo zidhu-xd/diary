@@ -1,62 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload File to Telegram</title>
-    <link href="output.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>6 Month Anniversary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #FDF5E6;
+      font-family: 'Press Start 2P', cursive;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    #container {
+      width: 80%;
+      margin: 10vh auto;
+      text-align: center;
+      border: 5px solid #8B4513;
+      padding: 20px;
+      background-color: #FFF8DC;
+    }
+    h1 {
+      color: #8B4513;
+      font-size: 24px;
+    }
+    #gif-container {
+      margin-top: 20px;
+    }
+    #play-button {
+      background-color: #FF6347;
+      color: white;
+      border: 2px solid black;
+      padding: 10px 20px;
+      font-family: 'Press Start 2P', cursive;
+      cursor: pointer;
+    }
+    #gif-wrapper {
+      display: none;
+    }
+    #gif-wrapper img {
+      max-width: 80vw;
+      height: auto;
+    }
+    @media (max-width: 600px) {
+      #container {
+        width: 90%;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      #gif-wrapper img {
+        max-width: 90vw;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 class="text-2xl font-bold mb-6 text-center">Upload File to Telegram</h1>
-        <form id="uploadForm" enctype="multipart/form-data" class="space-y-4">
-            <input type="file" name="file" accept="image/png,image/jpeg,image/gif,video/mp4,video/mpeg" class="w-full p-2 border rounded" required>
-            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Upload</button>
-        </form>
-        <p id="status" class="mt-4 text-center"></p>
+<body>
+  <div id="container">
+    <h1>We survived 6 months!</h1>
+    <div id="gif-container">
+      <button id="play-button">Click to celebrate</button>
+      <div id="gif-wrapper"><img src="https://i.gifer.com/3xq4.gif" alt="anniversary gif" loading="lazy"></div>
     </div>
-
-    <script>
-        const form = document.getElementById('uploadForm');
-        const status = document.getElementById('status');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            status.textContent = 'Uploading...';
-
-            const fileInput = form.querySelector('input[name="file"]');
-            const file = fileInput.files[0];
-            if (!file) {
-                status.textContent = 'Please select a file.';
-                return;
-            }
-
-            if (file.size > 50 * 1024 * 1024) {
-                status.textContent = 'File size exceeds 50MB limit.';
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const response = await fetch('https://diary-ao.onrender.com/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-                if (response.ok) {
-                    status.textContent = 'File sent to Telegram successfully!';
-                    form.reset();
-                } else {
-                    status.textContent = `Error: ${result.message || 'Failed to send file to Telegram.'}`;
-                }
-            } catch (error) {
-                status.textContent = 'Error uploading file: Network or server issue. Check backend logs.';
-                console.error(error);
-            }
-        });
-    </script>
+  </div>
+  <script>
+    document.getElementById('play-button').addEventListener('click', function() {
+      this.style.display = 'none';
+      document.getElementById('gif-wrapper').style.display = 'block';
+    });
+  </script>
 </body>
 </html>
